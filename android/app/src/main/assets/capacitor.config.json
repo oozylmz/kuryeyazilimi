@@ -1,0 +1,12 @@
+{
+	"appId": "com.kurye.takip",
+	"appName": "Kurye",
+	"webDir": "www",
+	"server": {
+		"url": "https://SITENIZ.netlify.app/kurye.html",
+		"cleartext": false
+	},
+	"android": {
+		"allowMixedContent": false
+	}
+}
