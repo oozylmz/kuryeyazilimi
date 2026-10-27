@@ -3,7 +3,7 @@
   "appName": "Kurye",
   "webDir": "www",
   "server": {
-    "url": "https://kuryeyazilimi.netlify.app/kurye.html",
+    "url": "https://https://kuryeyazilimi.netlify.app/kurye.html",
     "cleartext": false
   },
   "android": { "allowMixedContent": false }

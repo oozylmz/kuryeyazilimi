@@ -2,5 +2,9 @@
 	{
 		"pkg": "@capacitor-community/background-geolocation",
 		"classpath": "com.equimaps.capacitor_background_geolocation.BackgroundGeolocation"
+	},
+	{
+		"pkg": "@capacitor/local-notifications",
+		"classpath": "com.capacitorjs.plugins.localnotifications.LocalNotificationsPlugin"
 	}
 ]
