@@ -6,5 +6,6 @@
     "url": "https://kuryeyazilimi.netlify.app/kurye.html",
     "cleartext": false
   },
-  "android": { "allowMixedContent": false }
+  "android": { "allowMixedContent": false, "useLegacyBridge": true },
+  "plugins": { "CapacitorHttp": { "enabled": true } }
 }
