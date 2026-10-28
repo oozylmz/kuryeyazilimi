@@ -7,3 +7,9 @@
 5. İlk açılışta: Konum izni → İzin ver, Bildirim izni → İzin ver. Pil ayarlarında uygulamayı "Kısıtlama yok / Optimize etme" yap.
 
 Kurye ekranı Netlify'dan yüklenir: `kurye.html` değişince uygulamayı yeniden kurmak gerekmez.
+
+## Konum uygulama kapalıyken de çalışır (v2)
+Bu sürümde konumu telefonun kendi servisi (`TrackerService`) gönderir: ekran kapanınca, uygulama arka plana alınınca ya da uygulama
+kapatılınca da vardiya boyunca çalışır; vardiyayı bitirince ya da çıkış yapınca durur. İlk açılışta **konum → "Her zaman izin ver" → bildirim**
+izinleri istenir. Pil ayarında uygulamayı "Kısıtlama yok" yap. Telefon yeniden başlarsa servis vardiya açıksa kendiliğinden başlar.
+Ayarlardan "Zorla durdur" yapılırsa (Android kuralı) servis de durur; kurye uygulamayı yeniden açmalı.
