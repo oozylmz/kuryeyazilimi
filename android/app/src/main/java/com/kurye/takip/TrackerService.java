@@ -47,9 +47,9 @@ public class TrackerService extends Service implements LocationListener {
     static final String PREFS = "kurye_tracker";
     private static final String CHANNEL = "kurye_konum";
     private static final int NOTIF_ID = 4101;
-    private static final long SEND_MIN_MS = 15000L;     // en az 15 sn arayla (hareket yoksa)
-    private static final float SEND_MIN_M = 10f;        // ya da 10 m hareket
-    private static final long HEARTBEAT_MS = 30000L;    // duran kurye de "canlı" görünsün
+    private static final long SEND_MIN_MS = 20000L;     // en az 20 sn arayla (hareket yoksa)
+    private static final float SEND_MIN_M = 20f;        // ya da 20 m hareket
+    private static final long HEARTBEAT_MS = 60000L;    // duran kurye de "canlı" görünsün
 
     private LocationManager lm;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -66,7 +66,7 @@ public class TrackerService extends Service implements LocationListener {
         public void run() {
             long now = System.currentTimeMillis();
             if (lastLoc != null && now - lastSentAt >= HEARTBEAT_MS) send(lastLoc);
-            handler.postDelayed(this, 15000L);
+            handler.postDelayed(this, 30000L);
         }
     };
 
@@ -117,7 +117,7 @@ public class TrackerService extends Service implements LocationListener {
         }
         registerLocation();
         handler.removeCallbacks(heartbeat);
-        handler.postDelayed(heartbeat, 15000L);
+        handler.postDelayed(heartbeat, 30000L);
         return START_STICKY;
     }
 
@@ -134,11 +134,10 @@ public class TrackerService extends Service implements LocationListener {
         }
         try {
             if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000L, 5f, this, Looper.getMainLooper());
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000L, 15f, this, Looper.getMainLooper());
                 registered = true;
-            }
-            if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000L, 10f, this, Looper.getMainLooper());
+            } else if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {   // GPS kapalıysa ağ konumu (pil tasarrufu: ikisi birden açılmaz)
+                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000L, 30f, this, Looper.getMainLooper());
                 registered = true;
             }
         } catch (SecurityException e) {
