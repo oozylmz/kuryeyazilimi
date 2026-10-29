@@ -1,6 +1,6 @@
 {
   "appId": "com.kurye.takip",
-  "appName": "Kurye",
+  "appName": "İzci Kurye",
   "webDir": "www",
   "server": {
     "url": "https://kuryeyazilimi.netlify.app/kurye.html",
