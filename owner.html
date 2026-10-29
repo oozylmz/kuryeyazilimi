@@ -2,7 +2,7 @@
 <html lang="tr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>İzci Kurye · Sahip Paneli</title>
+<title>İzci Kurye · Admin Paneli</title>
 <script src="config.js"></script>
 <style>
 :root{--bg:#0f1114;--card:#181b20;--card2:#1f2329;--line:#2b3038;--tx:#f2f4f8;--mut:#98a0ab;--ok:#5baa7e;--go:#ff4d4d;--warn:#f59e0b;--err:#ef4444}
@@ -153,7 +153,7 @@ function render() {
   const app = $('#app');
   if (!tok) {
     app.innerHTML = `<div class="login"><div class="logo"><svg width="46" height="46" viewBox="0 0 24 24" fill="#0f1114" aria-hidden="true"><path d="M12 2 20.5 20.5 12 16 3.5 20.5Z"/></svg></div>
-      <h1>İzci Kurye</h1><div class="sub">Sahip paneli</div>${msg ? `<p class="err">${esc(msg)}</p>` : ''}
+      <h1>İzci Kurye</h1><div class="sub">Admin paneli</div>${msg ? `<p class="err">${esc(msg)}</p>` : ''}
       <label>Kullanıcı adı</label><input id="u" autocomplete="username" autocapitalize="none" spellcheck="false">
       <label>Şifre</label><input id="p" type="password" autocomplete="current-password">
       <button class="pri" id="go">Giriş Yap</button></div>`;
@@ -166,7 +166,7 @@ function render() {
   const qq = q.trim().toLowerCase();
   const shown = ts.filter(t => !qq || t.name.toLowerCase().includes(qq) || (t.note || '').toLowerCase().includes(qq)
     || t.branches.some(b => b.name.toLowerCase().includes(qq) || b.code.includes(qq)) || t.admins.some(a => a.username.toLowerCase().includes(qq)));
-  app.innerHTML = `<div class="hd"><div class="brand"><span class="bm">${LOGO}</span>İzci Kurye <small>Sahip paneli</small></div>
+  app.innerHTML = `<div class="hd"><div class="brand"><span class="bm">${LOGO}</span>İzci Kurye <small>Admin paneli</small></div>
       <button class="pri" data-a="new">+ Yeni müşteri</button><button data-a="mypw">Şifrem</button><button data-a="out">Çıkış</button></div>
     ${msg ? `<p class="err">${esc(msg)}</p>` : ''}
     <div class="tiles">
@@ -375,9 +375,9 @@ function statRange(id, k) {
   $('#s_f').value = iso(f); $('#s_t').value = iso(now); statLoad(id);
 }
 
-// ---------- sahip şifresi ----------
+// ---------- admin şifresi ----------
 function myPwDlg() {
-  dlg(`${title('Sahip şifresi')}<label>Yeni şifre (en az 8 karakter)</label><input id="o_p1" type="password" autocomplete="new-password">
+  dlg(`${title('Admin şifresi')}<label>Yeni şifre (en az 8 karakter)</label><input id="o_p1" type="password" autocomplete="new-password">
     <label>Tekrar</label><input id="o_p2" type="password" autocomplete="new-password"><div id="mm" class="msg err"></div>
     <div class="foot"><button data-mc="1">Vazgeç</button><button class="pri" data-a="mypwsave">Kaydet</button></div>`);
 }

@@ -296,7 +296,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:rgba(255,255,255,.03)}
 <script>
 if (typeof SUPABASE_URL === 'undefined') document.body.innerHTML = '<p style="padding:20px">config.js bulunamadı.</p>';
 
-// Sahip panelinden "yönetici olarak gir": oturum kodu adres kısmında gelir (#t=...), hemen silinir
+// Admin panelinden "yönetici olarak gir": oturum kodu adres kısmında gelir (#t=...), hemen silinir
 try { const h = location.hash.match(/^#t=([0-9a-f-]{36})$/i); if (h) { localStorage.setItem('atok', h[1]); history.replaceState(null, '', location.pathname); } } catch (e) {}
 let tok = localStorage.getItem('atok'), tab = 'live', data = { couriers: [], orders: [], delivered: [], restaurant: null }, report = { couriers: [], days: [] }, from = '', to = '';
 let warnMin = +localStorage.getItem('warnMin') || 20, lateMin = +localStorage.getItem('lateMin') || 35, fee = +localStorage.getItem('fee') || 0;
@@ -442,7 +442,7 @@ async function refreshOrders() {
 // ---------- Restoran / şube / şifre ----------
 function branchChip() {
   if (!info) return '<span style="margin-left:auto"></span>';
-  const imp = info.impersonated ? '<span class="chip" style="background:var(--go);color:#0f1114;font-weight:700" title="Sahip olarak giriş yaptın">Sahip girişi</span>' : '';
+  const imp = info.impersonated ? '<span class="chip" style="background:var(--go);color:#0f1114;font-weight:700" title="Admin olarak giriş yaptın">Admin girişi</span>' : '';
   const t = info.tenant ? esc(info.tenant.name) : '';
   if ((info.branches || []).length > 1)
     return `<span style="margin-left:auto"></span>${imp}<select id="brsel" title="${t}" style="max-width:200px">${info.branches.map(b => `<option value="${b.id}" ${info.branch && b.id === info.branch.id ? 'selected' : ''}>${esc(b.name)}</option>`).join('')}</select>`;
@@ -458,7 +458,7 @@ async function switchBranch(id) {
 function pwDialog() {
   let m = $('#mdl'); if (!m) { m = document.createElement('div'); m.id = 'mdl'; document.body.appendChild(m); }
   m.innerHTML = `<div class="bx"><div class="row"><b>Şifreni değiştir</b><button data-mc="1">Kapat</button></div>
-    ${info && info.impersonated ? '<p class="mut">Sahip girişinde şifre değiştirilemez.</p>' : `
+    ${info && info.impersonated ? '<p class="mut">Admin girişinde şifre değiştirilemez.</p>' : `
     <label>Mevcut şifre</label><input id="pw0" type="password" autocomplete="current-password">
     <label>Yeni şifre (en az 6 karakter)</label><input id="pw1" type="password" autocomplete="new-password">
     <label>Yeni şifre (tekrar)</label><input id="pw2" type="password" autocomplete="new-password">
