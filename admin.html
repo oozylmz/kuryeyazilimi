@@ -86,6 +86,11 @@ h4{font-size:12px;margin:0 0 5px;color:var(--mut)}
 .mapov .lg b{grid-column:1/-1;font-weight:600;margin-top:2px}
 .mapov .lg span{grid-column:1/-1}
 .mapov .lg i{width:8px;height:8px;margin-right:5px}.mapov .lg i.c{box-shadow:0 0 0 1.5px #fff}
+.kpw{overflow:visible}
+.kcp{position:absolute;left:0;top:0;transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;background:#16191d;color:#fff;border-radius:99px;padding:3px 8px 3px 5px;font:700 12px/1.2 system-ui,sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.18);white-space:nowrap}
+.kcp i{width:12px;height:12px;border-radius:50%;background:var(--c);flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.2)}
+.kcp span{max-width:92px;overflow:hidden;text-overflow:ellipsis}
+.kcp em{font-style:normal;background:rgba(255,255,255,.16);border-radius:99px;padding:0 6px;min-width:18px;text-align:center}
 .cv{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.5)}
 .cv svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 th,td{padding:6px 8px;font-size:13px}
@@ -592,8 +597,8 @@ function drawLive() {
     const st = courierState(c, outSet, R), col = st.col, stale = c.age_sec > 180;
     L.marker([c.lat, c.lng], {
       zIndexOffset: 1000,
-      icon: L.divIcon({ className: '', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10],
-        html: `<div class="cv" style="background:${col};opacity:${stale ? .45 : 1}">${SCOOT}</div>` })
+      icon: L.divIcon({ className: 'kpw', iconSize: [0, 0], iconAnchor: [0, 0], popupAnchor: [0, -14],
+        html: `<div class="kcp" style="--c:${col};opacity:${stale ? .5 : 1}"><i></i><span>${esc(c.name)}</span><em>${c.active_orders || 0}</em></div>` })
     }).bindPopup(`<b>${esc(c.name)}</b><br>${c.active_orders} sipariş · ${ago(c.age_sec)}${c.out_min != null ? '<br>dağıtımda <b>' + c.out_min + ' dk</b>' : ''}<br>${st.txt}${c.battery != null ? '<br>pil %' + c.battery : ''}`).addTo(layer);
     pts.push([c.lat, c.lng]);
   });
@@ -609,7 +614,7 @@ function drawLive() {
   $('#latec').textContent = lateList.length ? '· ' + lateList.length + ' geç' : '';
 
   $('#cl').innerHTML = data.couriers.length ? data.couriers.map(c =>
-      `<span class="chip" title="${c.battery != null ? 'pil %' + c.battery : ''}"><i style="background:${c.on_break ? '#f59e0b' : courierState(c, outSet, R).col}"></i>${esc(c.name)}${c.on_break ? ' · <b style="color:#f59e0b">' + (c.break_left_sec > 0 ? 'molada, ' + Math.ceil(c.break_left_sec / 60) + ' dk kaldı' : 'mola süresi doldu') + '</b>' : ''} · ${c.active_orders}${c.out_min != null ? ' · <b>' + c.out_min + ' dk</b> dağıtımda' : ''} · <span class="${c.age_sec == null || c.age_sec > 180 ? 'err' : 'mut'}">${ago(c.age_sec)}</span></span>`).join('')
+      `<span class="chip" title="${c.battery != null ? 'pil %' + c.battery : ''}"><i style="background:${c.on_break ? '#f59e0b' : courierState(c, outSet, R).col}"></i>${esc(c.name)}${c.on_break ? ' · <b style="color:#f59e0b">' + (c.break_left_sec > 0 ? 'molada, ' + Math.ceil(c.break_left_sec / 60) + ' dk kaldı' : 'mola süresi doldu') + '</b>' : ''} · ${c.active_orders} · <span class="${c.age_sec == null || c.age_sec > 180 ? 'err' : 'mut'}">${ago(c.age_sec)}</span></span>`).join('')
     : '<span class="mut">Vardiyada kurye yok</span>';
 
   if (document.activeElement && document.activeElement.tagName === 'SELECT' && Date.now() - selAt < 8000) return;  // seçim yapılırken kısa süre yenileme (8 sn sonra kendiliğinden yenilenir)
