@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#121211">
+<title>İzci Kurye</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1114;--card:#181b20;--card2:#1f2328;--line:#2b3038;--tx:#eef1ee;--mut:#98a0ab;--ok:#5baa7e;--go:#ff4d4d;--warn:#e8a23a;--err:#ef5b5b;--info:#5b9bd5;--ink:#0f1114}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;padding:0 14px 110px;max-width:560px;margin:0 auto;font-variant-numeric:tabular-nums}
+input,textarea{font-family:inherit}
+button{font-family:inherit;cursor:pointer}
+button:active,.pill:active{transform:scale(.97)}
+:focus-visible{outline:2px solid var(--go);outline-offset:2px}
+.mut{color:var(--mut)} .err{color:var(--err)} .ok{color:var(--ok)}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* üst çubuk */
+.hd{display:flex;align-items:center;gap:12px;padding:16px 0 12px;position:sticky;top:0;background:linear-gradient(var(--bg) 82%,transparent);z-index:5}
+.av{width:42px;height:42px;border-radius:50%;background:var(--go);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:18px;flex:none}
+.who{flex:1;min-width:0;display:grid}
+.who b{font-size:18px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gs{font-size:12.5px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.gs i{width:8px;height:8px;border-radius:50%;background:var(--mut);flex:none}
+.gs.on i{background:var(--ok);box-shadow:0 0 0 3px #5baa7e33} .gs.wn i{background:var(--warn)} .gs.bad i{background:var(--err)}
+.ib{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--mut);display:grid;place-items:center;padding:0}
+
+/* uyarı kutuları */
+.note{display:flex;gap:10px;align-items:flex-start;background:#2d2410;border:1px solid #4a3a16;border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:14.5px;line-height:1.45}
+.note>svg{margin-top:1px;color:var(--warn)}
+.note.bad{background:#2c1515;border-color:#512424}.note.bad>svg{color:var(--err)}
+.note.good{background:#12281c;border-color:#1f4a31}.note.good>svg{color:var(--ok)}
+.note.info{background:#12202e;border-color:#1f3a55}.note.info>svg{color:var(--info)}
+.note .nb{flex:1;min-width:0}.note .big{margin-top:10px}
+
+/* günün özeti */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.sc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;color:inherit;font:inherit;min-width:0}
+.sc .lb{font-size:12.5px;color:var(--mut);font-weight:600;display:flex;align-items:center;gap:2px;line-height:1.25}
+.sc .lb i{display:inline-flex;color:var(--go)}
+.sc .n1{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.5px}
+.sc{border-width:1.5px;transition:box-shadow .2s,border-color .2s}
+.sc.act .n1{color:#5b9bd5}
+.sc.on{border-color:#ff7a7a;box-shadow:0 0 6px #ff4d4d44}
+.sc.dn .n1{color:var(--ok)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:0 0 14px}
+.hero .t{display:flex;justify-content:space-between;align-items:center;color:var(--mut);font-size:13.5px}
+.hero .lk{background:none;border:0;color:var(--go);font-weight:700;font-size:13.5px;padding:4px 0;display:flex;align-items:center;gap:2px}
+.hero .nums{display:flex;gap:18px;align-items:flex-end;margin:8px 0 14px}
+.hero .nums>div{display:grid}
+.hero .n1{font-size:44px;font-weight:800;line-height:1;letter-spacing:-1.5px}
+.hero .n2{font-size:30px;font-weight:800;line-height:1.1;letter-spacing:-.8px;color:var(--ok)}
+.hero .cap{font-size:12.5px;color:var(--mut);margin-top:4px}
+.bar{display:flex;gap:2px;height:8px;border-radius:5px;overflow:hidden;background:var(--card2)}
+.bar span{display:block;min-width:0}
+.lg{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--mut)}
+.lg b{color:var(--tx);font-weight:600}.lg i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+
+/* sipariş kartı */
+.sec{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 10px;font-weight:700;font-size:17px}
+.sec span{color:var(--mut);font-weight:500;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;margin:0 0 14px;overflow:hidden;position:relative}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--warn)}
+.card.go::before{background:var(--ok)}
+.cb{padding:16px 16px 16px 20px;display:grid;gap:12px}
+.ch{display:flex;align-items:center;gap:8px}
+.ch .no{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:700;background:var(--card2);color:var(--mut)}
+.chip.st{background:#3a2d10;color:var(--warn)} .card.go .chip.st{background:#143322;color:var(--ok)}
+.ch .sp{flex:1}
+.ar{display:flex;gap:6px}.ar button{border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--tx);width:34px;height:34px;font-size:13px;padding:0}
+.cn{font-size:19px;font-weight:700;line-height:1.25}
+.ad{color:#c3cac5;font-size:15.5px;line-height:1.45}
+.ad small{color:var(--ok);font-weight:700}
+.nt{background:#12202e;border-radius:12px;padding:10px 12px;color:#bcd6ee;font-size:14.5px;display:flex;gap:8px}
+.nt.warnb{background:#2d2410;color:#f0cf8b}
+.pay{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;padding:12px 14px;background:var(--card2)}
+.pay .l{display:grid;font-size:12.5px;color:var(--mut)}
+.pay .l b{font-size:12.5px;color:var(--tx);font-weight:700}
+.pay .amt{font-size:26px;font-weight:800;letter-spacing:-.6px}
+.pay.paid{background:#12281c;color:var(--ok);font-weight:700}
+.pay.paid .amt{font-size:16px}
+.acts{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
+.ab{border:1px solid var(--line);background:var(--card2);color:var(--tx);border-radius:14px;padding:10px 4px;display:grid;justify-items:center;gap:5px;font-size:12.5px;font-weight:600;text-decoration:none;text-align:center;min-height:62px;align-content:center}
+.ab svg{color:var(--go)}
+.ext{font-size:12.5px;color:var(--mut);margin-top:-6px}
+.btn,.big,.sm{border:0;border-radius:14px;text-decoration:none;text-align:center;font-weight:700}
+.big{width:100%;padding:17px;font-size:18px;background:var(--go);color:var(--ink);display:flex;align-items:center;justify-content:center;gap:9px}
+.big.ok2{background:var(--ok)}.big.warn{background:var(--warn);color:#1a1204}.big.dk{background:var(--card2);color:var(--tx);border:1px solid var(--line)}
+.sm{padding:10px 14px;background:var(--card2);color:var(--tx);font-size:14px;border:1px solid var(--line)}
+.sm.tx{background:none;border:0;color:var(--mut);font-weight:600;padding:8px}
+.two2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big.pn{background:var(--ok)}.big.pk{background:var(--info)}
+.two{display:grid;grid-template-columns:1fr 1.6fr;gap:8px}
+.cf{display:grid;gap:10px}
+.cf .q{font-size:17px;font-weight:700;text-align:center}
+.items{background:var(--card2);border-radius:14px;padding:4px 12px}
+.ih{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:0;color:var(--tx);padding:11px 0;font-size:14.5px;font-weight:600}
+.ih span{color:var(--mut);font-weight:500;font-size:13px}
+.it{padding:9px 0;border-top:1px solid var(--line);font-size:15px;display:flex;gap:8px}
+.it .ck{width:22px;height:22px;border-radius:7px;border:2px solid #444b47;flex:none;margin-top:1px;display:grid;place-items:center}
+.it.dn{opacity:.45}.it.dn .tt{text-decoration:line-through}.it.dn .ck{background:var(--ok);border-color:var(--ok)}
+.it .tt{flex:1}
+.it small{display:block;margin-top:2px}
+.empty{text-align:center;padding:44px 20px;color:var(--mut)}
+.empty svg{width:120px;height:120px;margin:0 auto 14px;display:block}
+.empty b{display:block;color:var(--tx);font-size:18px;margin-bottom:4px}
+.dl.clk{cursor:pointer}.dl.clk:active{background:rgba(255,255,255,.04)}
+.ddr{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:14.5px}.ddr small{color:var(--mut);min-width:52px;text-align:right}
+.ddh{margin:14px 0 2px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.dl{display:flex;justify-content:space-between;gap:8px;padding:11px 0;border-top:1px solid var(--line);font-size:15px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:0 0 14px}
+.panel h3{margin:0 0 10px;font-size:17px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:15px}.kv b{text-align:right}
+
+/* sağ alt durum butonu + alt sayfa */
+.pill{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:20;border:0;border-radius:999px;padding:14px 20px;font-size:15.5px;font-weight:800;color:var(--tx);background:#2b3038;box-shadow:0 8px 24px #000a;display:flex;gap:9px;align-items:center}
+.pill.off{background:var(--go);color:var(--ink)} .pill:not(.off):not(.brk):not(.late) i{background:var(--go)} .pill.brk{background:var(--warn);color:#1a1204} .pill.late{background:var(--err);color:#fff;animation:pl 1.2s ease-in-out infinite}
+@keyframes pl{50%{box-shadow:0 0 0 10px #ef5b5b33,0 8px 24px #000a}}
+.pill i{width:9px;height:9px;border-radius:50%;background:currentColor;display:inline-block}
+.shd{position:fixed;inset:0;background:#000a;z-index:30;display:flex;align-items:flex-end;animation:fd .18s}
+.sht{width:100%;max-width:560px;margin:0 auto;background:var(--card);border-radius:24px 24px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));display:grid;gap:10px;animation:up .22s ease-out}
+.sht .grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 6px}
+.sht h4{margin:2px 0 4px;font-size:18px}
+@keyframes up{from{transform:translateY(40px);opacity:.5}}@keyframes fd{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* --- giriş ekranı + ana tema (koyu, adaçayı yeşili) --- */
+.au{max-width:340px;margin:0 auto;padding-top:7vh;text-align:center}
+.au .logo{width:92px;height:92px;border-radius:50%;background:var(--go);display:grid;place-items:center;margin:0 auto 18px}
+.au h1{margin:0;font-size:30px;letter-spacing:-.5px}
+.au .sub{color:var(--mut);margin:6px 0 34px}
+.au .f{display:block;text-align:left;font-weight:600;margin:0 0 8px}
+.au .in{position:relative;margin:0 0 18px}
+.au .in svg.ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;stroke:var(--mut);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.au .in input{width:100%;padding:15px 46px;margin:0;border-radius:14px;border:1px solid #38383a;background:var(--card);color:var(--tx);font-size:17px}
+.au .in input:focus{outline:0;border-color:var(--go)}
+.au .eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mut);padding:10px;line-height:0}
+.au .eye svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.au .rem{display:flex;gap:10px;align-items:center;margin:0 0 22px;font-size:15px;color:var(--mut);text-align:left}
+.au .rem input{width:18px;height:18px;margin:0;accent-color:var(--go)}
+.au .gobtn{width:100%;padding:15px;border:0;border-radius:14px;background:var(--go);color:#0d1a12;font-size:18px;font-weight:700}
+.au .er{color:var(--err);margin:0 0 14px}
+
+.qm{display:flex;gap:8px}
+.qb{flex:1;border:1px solid var(--line);background:none;color:var(--mut);border-radius:12px;padding:9px 6px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}
+.qb svg{width:16px;height:16px}
+.brd{padding:14px 16px}.bh{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:15px}.bh svg{color:var(--warn)}
+.br{display:grid;grid-template-columns:22px minmax(0,1fr) 70px 26px 44px;gap:8px;align-items:center;padding:7px 8px;border-radius:10px;font-size:14px}
+.br.me{background:#12281c}
+.br .rk{color:var(--mut);font-weight:700;text-align:center}.br .bn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.br .bt{height:7px;background:var(--card2);border-radius:4px;overflow:hidden}.br .bt i{display:block;height:100%;background:var(--go);border-radius:4px}
+.br b{text-align:right}.br small{color:var(--mut);text-align:right;font-size:12px}
+</style></head>
+<body>
+<div id="app"></div>
+<script src="config.js"></script>
+<script>
+if (typeof SUPABASE_URL === "undefined") document.body.innerHTML = "<p style='padding:20px'>config.js bulunamadı. Supabase bilgilerini config.js dosyasına yaz.</p>";
+let tok = localStorage.getItem('tok'), name = localStorage.getItem('name') || '';
+let shift = localStorage.getItem('shift') === '1';
+let orders = [], sum = {}, watchId = null, wl = null, last = { t: 0, lat: 0, lng: 0 }, openPay = null, msg = '', gpsErr = null, seen = null, openRel = null, notice = '', audioCtx = null, mine = new Set(), noticeBad = false;
+let lastPing = 0, pingErr = '', editNote = null, noteTxt = '', cur = null;
+let dsel = null, board = [], boardAt = 0, payPick = null, openItems = {}, sheet = false, brk = { on: false, until: 0, min: 15 }, brkRing = 0;
+try { brk = JSON.parse(localStorage.getItem('brk') || 'null') || brk; } catch (e) {}
+let queue = [], ord = [], ck = {}, online = true, view = null, dels = [], flushP = null;
+try { queue = JSON.parse(localStorage.getItem('q') || '[]'); ord = JSON.parse(localStorage.getItem('ord') || '[]'); ck = JSON.parse(localStorage.getItem('ck') || '{}'); } catch (e) {}
+try { const c = JSON.parse(localStorage.getItem('cache') || 'null'); if (c && c.tok === tok) { orders = c.orders || []; sum = c.sum || {}; } } catch (e) {}
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const tl = n => Number(n || 0).toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' ₺';
+
+async function rpc(fn, args = {}) {
+  let r;
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 20000);
+  try {
+    r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST', signal: ac.signal,
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(args)
+    });
+  } catch (e) { const er = new Error('İnternet yok'); er.net = true; throw er; }
+  finally { clearTimeout(to); }
+  const j = await r.json().catch(() => null);
+  if (!r.ok) {
+    if (j && /devre dışı/.test(j.message || '')) { msg = j.message; logout(); }
+    else if (j && /oturum/.test(j.message || '')) { if (!await relogin()) logout(); }
+    throw new Error((j && j.message) || 'Bağlantı hatası');
+  }
+  return j;
+}
+
+let rem = null; try { rem = JSON.parse(localStorage.getItem('rem') || 'null'); } catch (e) {}
+async function relogin() {                             // oturum süresi dolduysa kayıtlı bilgiyle sessizce yeniden gir
+  if (!rem) return false;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/adk_courier_login`, { method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_code: rem.c || localStorage.getItem('code') || '', p_name: rem.n, p_pin: rem.p }) });
+    if (!r.ok) return false;
+    const j = await r.json(); if (!j.ok) return false; tok = j.token; localStorage.setItem('tok', tok); return true;
+  } catch (e) { return false; }
+}
+async function login() {
+  try {
+    const cd = $('#c').value.trim(), n = $('#n').value, pn = $('#p').value;
+    try { localStorage.setItem('code', cd); localStorage.setItem('name', n); } catch (e) {}
+    const j = await rpc('adk_courier_login', { p_code: cd, p_name: n, p_pin: pn });
+    if (!j.ok) { msg = j.error || 'Giriş yapılamadı'; return draw(); }
+    rem = $('#r').checked ? { c: cd, n, p: pn } : null;
+    rem ? localStorage.setItem('rem', JSON.stringify(rem)) : localStorage.removeItem('rem');
+    tok = j.token; name = j.name; shift = false; msg = ''; seen = null; setBrk(false);
+    localStorage.setItem('tok', tok); localStorage.setItem('name', name); localStorage.setItem('shift', '0');
+    draw(); refresh();
+  } catch (e) { msg = e.message; draw(); }
+}
+function logout() {
+  stopGps(); tok = null; shift = false; seen = null; setBrk(false); sheet = false;
+  localStorage.removeItem('tok'); localStorage.setItem('shift', '0'); localStorage.removeItem('cache'); view = null; draw();
+}
+
+// ---- İnternet yokken yapılan işlemler telefonda bekler, bağlantı gelince sırayla gönderilir ----
+function flush() {
+  if (flushP) return flushP;
+  if (!queue.length || !tok) return Promise.resolve();
+  flushP = (async () => {
+    while (queue.length) {
+      const it = queue[0];
+      try { await rpc(it.fn, { ...it.args, p_token: tok }); }
+      catch (e) { if (e.net) { online = false; break; } msg = e.message; }   // sunucu reddettiyse (ör. başkasına geçmiş) işlemi bırak
+      queue.shift(); save('q', queue);
+    }
+  })().finally(() => { flushP = null; });
+  return flushP;
+}
+async function refresh() {
+  if (!tok) return;
+  await flush();
+  try {
+    [orders, sum] = await Promise.all([rpc('adk_courier_orders', { p_token: tok }), rpc('adk_courier_today', { p_token: tok })]);
+    online = true; save('cache', { tok, orders, sum });
+    if (Date.now() - boardAt > 60000) { boardAt = Date.now(); rpc('adk_courier_board', { p_token: tok }).then(b => { board = b || []; if (editNote === null) draw(); }).catch(() => {}); }
+    try {
+      const st = await rpc('adk_courier_state', { p_token: tok });
+      if (st.on_break) setBrk(true, Date.now() + st.break_left_sec * 1000, st.break_minutes); else if (brk.on) setBrk(false);
+      if (st.break_minutes) { brk.min = st.break_minutes; save('brk', brk); }
+    } catch (e) {}
+    const ids = new Set(orders.map(o => o.adisyo_id));
+    if (seen) {
+      const n = orders.filter(o => !seen.has(o.adisyo_id)).length; if (n) alertNew(n);
+      // Kendi teslim/bırakma işlemim dışında listeden kalkan sipariş = iptal, Adisyo'da kapatma ya da başka kuryeye atama
+      const gone = [...seen.keys()].filter(id => !ids.has(id) && !mine.has(id));
+      if (gone.length) alertGone(gone.map(id => '#' + (seen.get(id) ?? '')).join(', '));
+    }
+    seen = new Map(orders.map(o => [o.adisyo_id, o.order_no])); mine.clear(); msg = '';
+  } catch (e) { if (e.net) { online = false; msg = ''; } else msg = e.message; }
+  if (editNote === null) draw();
+}
+
+// ---- Konum: ~10 m hareket veya en az 15 sn'de bir gönder ----
+const dist = (a, b, c, d) => {
+  const t = x => x * Math.PI / 180, dl = t(c - a), dg = t(d - b);
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(t(a)) * Math.cos(t(c)) * Math.sin(dg / 2) ** 2;
+  return 12742000 * Math.asin(Math.sqrt(h));
+};
+// Mobil uygulamada (Capacitor) arka planda da çalışan konum servisi kullanılır; tarayıcıda normal konum
+// Yeni APK: konumu uygulama kapalıyken de gönderen yerel servis (NativeTracker). Eski APK: BackgroundGeolocation eklentisi.
+const TRK = () => (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.NativeTracker) || null;
+const BG = () => (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.BackgroundGeolocation) || null;
+const NATIVE = () => !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && (TRK() || BG()));
+let bgId = null, trkOn = false, bgWarn = false;
+async function sendPing(la, lo, speed) {
+  last = { t: Date.now(), lat: la, lng: lo };
+  let bat = null; try { bat = Math.round((await navigator.getBattery()).level * 100); } catch (e) {}
+  rpc('adk_courier_ping', { p_token: tok, p_lat: la, p_lng: lo, p_speed: speed, p_battery: bat })
+    .then(() => { lastPing = Date.now(); pingErr = ''; }).catch(e => { pingErr = e.message; });
+}
+function onPos(la, lo, speed) {
+  if (gpsErr) { gpsErr = null; draw(); }              // konum açıldı: uyarı kapanır
+  const now = Date.now();
+  cur = { lat: la, lng: lo, t: now };
+  if (now - last.t < 15000 && dist(last.lat, last.lng, la, lo) < 10) return;
+  sendPing(la, lo, speed);
+}
+setInterval(() => { if (shift && NATIVE() && !TRK() && cur && Date.now() - last.t > 30000) sendPing(cur.lat, cur.lng, null); }, 15000);   // duran kurye de "canlı" görünsün
+async function startGps() {
+  stopGps();
+  if (TRK()) {                                   // yerel servis: konumu kendisi sunucuya gönderir (uygulama kapalıyken de)
+    try {
+      const first = !localStorage.getItem('bgAsked');             // "Her zaman" izni sadece ilk seferde sorulur, sonra uyarıdan ayarlara gidilir
+      const p = await TRK().ensurePermissions({ background: first });
+      localStorage.setItem('bgAsked', '1');
+      if (!p.location) { gpsErr = 'denied'; draw(); return; }
+      bgWarn = !p.background;
+      if (!trkOn) {
+        trkOn = true;
+        TRK().addListener('location', l => { cur = { lat: l.lat, lng: l.lng, t: Date.now() }; if (gpsErr) { gpsErr = null; draw(); } });
+        TRK().addListener('ping', r => { if (r.ok) { lastPing = Date.now(); pingErr = ''; } else if (r.err) pingErr = r.err; });
+      }
+      await TRK().start({ url: SUPABASE_URL, key: SUPABASE_ANON_KEY, token: tok });
+      draw();
+    } catch (e) { gpsErr = 'denied'; draw(); }
+    return;
+  }
+  if (NATIVE()) {
+    // Android 13+: arka plan konum bildirimi için bildirim izni şart (yoksa servis arka planda durur)
+    try { const LN = Capacitor.Plugins.LocalNotifications; if (LN) { const st = await LN.checkPermissions(); if (st.display !== 'granted') await LN.requestPermissions(); } } catch (e) {}
+    try {
+      bgId = await BG().addWatcher({ backgroundTitle: 'Kurye konumu paylaşılıyor', backgroundMessage: 'Vardiyayı bitirince kapanır',
+        requestPermissions: true, stale: false, distanceFilter: 5 }, (l, err) => {
+        if (err) { if (err.code === 'NOT_AUTHORIZED') { gpsErr = 'denied'; draw(); } return; }
+        onPos(l.latitude, l.longitude, l.speed);
+      });
+    } catch (e) { gpsErr = 'denied'; draw(); }
+    return;
+  }
+  if (!navigator.geolocation) { gpsErr = 'unsupported'; return draw(); }
+  try { wl = await navigator.wakeLock.request('screen'); } catch (e) {}
+  watchId = navigator.geolocation.watchPosition(p => onPos(p.coords.latitude, p.coords.longitude, p.coords.speed), geoFail, { enableHighAccuracy: true, maximumAge: 5000 });
+}
+function stopGps() {
+  if (TRK()) { try { TRK().stop(); } catch (e) {} }
+  if (bgId != null) { try { BG().removeWatcher({ id: bgId }); } catch (e) {} bgId = null; }
+  if (watchId != null) navigator.geolocation.clearWatch(watchId);
+  watchId = null; try { wl && wl.release(); } catch (e) {} wl = null;
+}
+function geoFail(e) {
+  if (e.code === 1) gpsErr = 'denied';
+  else if (e.code === 2) gpsErr = 'off';
+  else return;                                         // zaman aşımı: uyarı verme
+  draw();
+}
+function checkGps() {
+  return new Promise(res => {
+    if (!navigator.geolocation) { gpsErr = 'unsupported'; draw(); return res(false); }
+    navigator.geolocation.getCurrentPosition(
+      () => { if (gpsErr) { gpsErr = null; draw(); } res(true); },
+      e => { if (e.code === 3) return res(true); geoFail(e); res(false); },
+      { enableHighAccuracy: true, timeout: 15000 });
+  });
+}
+async function retryGps() {
+  if (NATIVE()) { gpsErr = null; if (shift) startGps(); return draw(); }
+  if (await checkGps() && shift) startGps();
+}
+const P = {
+  nav: '<path d="M3 11l18-8-8 18-2-8-8-2z"/>', phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  pin: '<path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>', note: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/>',
+  out: '<path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M16 8l4 4-4 4M20 12H9"/>', warn: '<path d="M12 3l10 18H2L12 3zM12 10v5M12 18v.5"/>',
+  chk: '<path d="M5 12l5 5 9-10"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/>', go: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>', card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>',
+  msg: '<path d="M4 5h16v11H9l-5 4V5z"/>', trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H4v1a3 3 0 0 0 4 3M16 6h4v1a3 3 0 0 1-4 3M12 13v4M8 20h8"/>',
+  chev: '<path d="M9 6l6 6-6 6"/>', cloud: '<path d="M7 18a4 4 0 0 1-.6-8A6 6 0 0 1 18 9.5 4.3 4.3 0 0 1 17.5 18H7z"/>'
+};
+const ico = k => `<svg class="i" viewBox="0 0 24 24">${P[k]}</svg>`;
+const agoMin = t => { const m = Math.max(0, Math.round((Date.now() - new Date(t)) / 60000)); return m < 60 ? m + ' dk' : Math.floor(m / 60) + ' sa ' + (m % 60) + ' dk'; };
+const alertBox = (k, html, cls = '', attr = '') => `<div class="note ${cls}" ${attr}>${ico(k)}<div class="nb">${html}</div></div>`;
+function gpsStatus() {
+  if (!shift) return '<span class="gs"><i></i>Vardiya dışı</span>';
+  const ag = lastPing ? Math.round((Date.now() - lastPing) / 1000) : null;
+  const t = ag === null ? 'konum bekleniyor' : 'son konum ' + (ag < 60 ? ag + ' sn' : Math.round(ag / 60) + ' dk') + ' önce';
+  if (gpsErr) return '<span class="gs bad"><i></i>Konum kapalı</span>';
+  if (pingErr) return `<span class="gs wn"><i></i>${esc(pingErr)}</span>`;
+  return `<span class="gs ${NATIVE() ? 'on' : 'wn'}"><i></i>${NATIVE() ? 'Konum açık' : 'Tarayıcı modu, arka planda durur'} · ${t}</span>`;
+}
+function gpsBanner() {
+  if (!gpsErr && TRK() && bgWarn && shift) return alertBox('warn', `<b>Uygulama kapalıyken konum paylaşılamaz.</b><br>Ayarlar → Uygulamalar → <b>Kurye</b> → İzinler → Konum → <b>"Her zaman izin ver"</b> seç.
+    <button class="big" data-a="bgset">Ayarları Aç</button>`);
+  if (!gpsErr) return '';
+  if (NATIVE()) return alertBox('warn', `<b>Konum izni yok, vardiya takip edilemiyor.</b><br>Ayarlar → Uygulamalar → <b>Kurye</b> → İzinler → Konum → <b>İzin ver</b> (mümkünse "Her zaman").
+    <button class="big" data-a="bgset">Ayarları Aç</button><button class="big dk" data-a="retry" style="margin-top:8px">İzni Verdim, Tekrar Dene</button>`, 'bad');
+  const ua = navigator.userAgent, ios = /iPhone|iPad/.test(ua);
+  const iosTxt = /CriOS/.test(ua) ? 'Ayarlar → <b>Chrome</b> → Konum → <b>Uygulamayı Kullanırken</b> seç.'
+    : /FxiOS|EdgiOS|OPiOS|DuckDuckGo/.test(ua) ? 'Telefonun Ayarlar uygulamasında <b>kullandığın tarayıcıyı</b> bul → Konum → <b>Uygulamayı Kullanırken</b> seç.'
+    : 'Safari\'de adres çubuğundaki <b>aA</b> simgesine dokun → <b>Web Sitesi Ayarları → Konum → İzin Ver</b>.';
+  const how = gpsErr === 'unsupported' ? 'Bu tarayıcı konumu desteklemiyor. Chrome veya Safari ile aç.'
+    : gpsErr === 'off' ? (ios ? 'Ayarlar → Gizlilik ve Güvenlik → <b>Konum Servisleri</b> anahtarını aç.'
+        : 'Telefonun <b>Konum (GPS)</b> özelliği kapalı. Üstten bildirim panelini çekip <b>Konum</b> seçeneğini aç.')
+    : ios ? iosTxt + ' Ayrıca Ayarlar → Gizlilik ve Güvenlik → <b>Konum Servisleri</b> açık olmalı.'
+    : 'Adres çubuğundaki <b>kilit / ayar simgesine</b> dokun → <b>İzinler → Konum → İzin ver</b>. Olmazsa: Ayarlar → Uygulamalar → <b>tarayıcın</b> → İzinler → Konum.';
+  return alertBox('warn', `<b>Konum kapalı, vardiya takip edilemiyor.</b><br>${how}<button class="big" data-a="retry">Konumu Açtım, Tekrar Dene</button>`, 'bad');
+}
+async function toggleShift() {
+  if (!shift && !NATIVE() && !await checkGps()) return;             // konum yoksa vardiya başlamaz, uyarı görünür
+  shift = !shift; localStorage.setItem('shift', shift ? '1' : '0'); if (!shift) setBrk(false);
+  try { await rpc('adk_courier_shift', { p_token: tok, p_on: shift }); }
+  catch (e) { if (e.net && !shift) { queue.push({ fn: 'adk_courier_shift', args: { p_on: false } }); save('q', queue); } }
+  shift ? startGps() : stopGps();
+  if (!shift) {                                        // vardiya sonu özeti
+    await flush();
+    try { dels = (await rpc('adk_courier_deliveries', { p_token: tok })) || []; view = 'shift'; } catch (e) { view = null; }
+  }
+  draw();
+}
+function setBrk(on, until, min) {
+  brk = { on, until: on ? until : 0, min: min || brk.min || 15 }; brkRing = 0; save('brk', brk);
+  try { const LN = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications;
+    if (LN) { LN.cancel({ notifications: [{ id: 7001 }] }).catch(() => {});
+      if (on) LN.requestPermissions().catch(() => {}).then(() => LN.schedule({ notifications: [{ id: 7001, title: 'Mola bitti', body: 'Molan bitti, işe dönebilirsin.', schedule: { at: new Date(until), allowWhileIdle: true } }] })).catch(() => {}); } } catch (e) {}
+}
+async function toggleBreak() {
+  const on = !brk.on;
+  try {
+    const j = await rpc('adk_courier_break', { p_token: tok, p_on: on });
+    on ? setBrk(true, Date.now() + j.break_left_sec * 1000, j.break_minutes) : setBrk(false);
+    sheet = false; notice = ''; draw();
+  } catch (e) {
+    noticeBad = true; notice = e.net ? 'Mola için internet gerekli' : e.message; sheet = false; draw();
+    clearTimeout(alertNew.t); alertNew.t = setTimeout(() => { notice = ''; draw(); }, 8000);
+  }
+}
+const QM = { kapida: 'Kapıdayım bilgisi gönderildi', ulasamiyor: 'Müşteriye ulaşamadığın yönetime bildirildi', ariza: 'Araç arızası yönetime bildirildi', yardim: 'Yardım isteğin yönetime iletildi' };
+async function sendMsg(kind, orderId) {
+  try { await rpc('adk_courier_msg', { p_token: tok, p_kind: kind, p_order_id: orderId || null }); noticeBad = false; notice = QM[kind]; }
+  catch (e) { noticeBad = true; notice = e.net ? 'Mesaj gitmedi: internet yok' : e.message; }
+  sheet = false; draw();
+  clearTimeout(alertNew.t); alertNew.t = setTimeout(() => { notice = ''; draw(); }, 6000);
+}
+const mmss = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+function pillHtml() {
+  let cls = 'off', txt = 'Vardiyaya başla';
+  if (shift && brk.on) { const left = brk.until - Date.now(); if (left > 0) { cls = 'brk'; txt = 'Molada · ' + mmss(left); } else { cls = 'late'; txt = 'Mola bitti · +' + mmss(-left); } }
+  else if (shift) { cls = ''; txt = 'Vardiyadan çık'; }
+  return `<button class="pill ${cls}" id="pill" data-a="${shift ? 'sheet' : 'shift'}"><i></i><span>${txt}</span></button>`;
+}
+function ddHtml() {
+  const d = dsel && dels.find(x => x.adisyo_id === dsel); if (!d) return '';
+  const df = (a, b) => a && b ? Math.max(0, Math.round((new Date(b) - new Date(a)) / 60000)) : null;
+  const st = [['Sipariş alındı', d.created_at, null], ['Hazırlandı', d.prepared_at, df(d.created_at, d.prepared_at)], ['Yola çıktım', d.picked_at, df(d.prepared_at || d.created_at, d.picked_at)], ['Teslim ettim', d.delivered_at, df(d.picked_at, d.delivered_at)]]
+    .filter(x => x[1]).map(x => `<div class="ddr"><span>${x[0]}</span><b>${hm(x[1])}</b><small>${x[2] != null ? '+' + x[2] + ' dk' : ''}</small></div>`).join('');
+  const items = (Array.isArray(d.items) ? d.items : []).filter(p => !hid(p.n)).map(p =>
+    `<div class="ddr"><span style="${p.sub ? 'padding-left:14px' : ''}">${p.sub ? '↳ ' : ''}<b>${fq(p.q)}×</b> ${esc(p.n)}</span></div>`).join('');
+  const dist = d.deliver_dist != null ? (d.deliver_dist >= 1000 ? (d.deliver_dist / 1000).toFixed(1) + ' km' : d.deliver_dist + ' m') + ' uzaklıkta teslim' : '';
+  return `<div class="shd" data-a="ddx"><div class="sht" data-a="nop" style="max-height:86vh;overflow:auto"><div class="grab"></div>
+    <h4>#${d.order_no ?? ''} · ${esc(d.region || '')}</h4>
+    <div class="ddr"><span>${PAYN[d.payment_type] || ''}${d.adisyo_payment ? ' · ' + esc(d.adisyo_payment) : ''}</span><b>${tl(d.total)}</b></div>
+    <div class="ddh">Süreç</div>${st}${dist ? `<div class="mut" style="font-size:13px;margin-top:4px">${dist}</div>` : ''}
+    <div class="ddh">Müşteri</div>${d.customer_purged ? '<div class="mut">Müşteri bilgisi silindi (teslimden 12 saat sonra)</div>' : `<div class="ddr"><span><b>${esc(d.customer_name || '')}</b></span></div><div class="mut" style="font-size:14px">${esc(d.address || '')}</div>${d.note ? `<div class="nt warnb">${ico('info')}<span>${esc(d.note)}</span></div>` : ''}`}
+    <div class="ddh">Ürünler</div>${items || '<div class="mut">Ürün bilgisi yok</div>'}
+    <button class="sm tx" data-a="ddx" style="margin-top:10px">Kapat</button></div></div>`;
+}
+function sheetHtml() {
+  if (!sheet) return '';
+  const hasPk = orders.length > 0;
+  const b = !shift ? '<h4>Vardiya dışısın</h4><button class="big" data-a="shift">Vardiyayı Başlat</button>'
+    : brk.on ? '<h4>Moladasın</h4><button class="big" data-a="brk">Moladan Dön</button><button class="big dk" data-a="shift">Vardiyayı Bitir</button>'
+    : `<h4>Vardiyadasın</h4><button class="big warn" data-a="brk">Molaya Çık · ${brk.min} dk</button>${hasPk ? '<div class="mut" style="font-size:13px;text-align:center;margin-top:-4px">Üzerinde paket varken molaya çıkılamaz</div>' : ''}<button class="big dk" data-a="shift">Vardiyayı Bitir</button>`;
+  const rep2 = shift ? `<div class="mut" style="font-size:13px;margin-top:4px">Yönetime bildir</div><div class="two2"><button class="big dk" data-a="qm" data-k="ariza">${ico('warn')} Araç arızası</button><button class="big dk" data-a="qm" data-k="yardim">${ico('msg')} Yardım lazım</button></div>` : '';
+  return `<div class="shd" data-a="sheetx"><div class="sht" data-a="nop"><div class="grab"></div>${b}${rep2}<button class="sm tx" data-a="sheetx">Kapat</button></div></div>`;
+}
+setInterval(() => {
+  const el = $('#pill'); if (!el || !tok) return;
+  if (brk.on && shift) {
+    const left = brk.until - Date.now();
+    if (left <= 0) {
+      if (!brkRing || Date.now() - brkRing > 15000) { brkRing = Date.now(); beep(); try { navigator.vibrate && navigator.vibrate([600, 200, 600, 200, 600]); } catch (e) {} noticeBad = false; notice = 'Molan bitti, işe dönebilirsin'; draw(); return; }
+    }
+    el.outerHTML = pillHtml();
+  }
+}, 1000);
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState !== 'visible') return;
+  if (gpsErr) return retryGps();                       // ayarlardan dönünce otomatik dene
+  if (shift && !NATIVE()) { try { wl = await navigator.wakeLock.request('screen'); } catch (e) {} }   // APK'da ekranı açık tutma (pil)
+});
+// İzin ayardan açılırsa uyarı kendiliğinden kapanır
+if (navigator.permissions) navigator.permissions.query({ name: 'geolocation' }).then(p => {
+  p.onchange = () => { if (p.state === 'granted' && gpsErr) { gpsErr = null; if (shift) startGps(); draw(); } };
+}).catch(() => {});
+
+// ---- Telefon (iPhone + Android) ----
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const addrQ = o => encodeURIComponent((o.address || '') + ' ' + (o.region || ''));
+function navUrl(o) {   // iPhone: Apple Haritalar, Android: Google Haritalar
+  const dest = o.lat && o.lng ? `${o.lat},${o.lng}` : addrQ(o);
+  return IOS ? `https://maps.apple.com/?daddr=${dest}&dirflg=d` : `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=driving`;
+}
+const searchUrl = o => IOS ? `https://maps.apple.com/?q=${addrQ(o)}` : `https://www.google.com/maps/search/?api=1&query=${addrQ(o)}`;
+// Online siparişlerde numaranın sonundaki dahili/sipariş kodunu ayırır; aranınca duraklayıp kendisi tuşlar (virgül = bekleme)
+function dialInfo(o) {
+  // "0850xxxxxxx/kod" gibi (Uber Eats: Trendyol + Getir) ya da numaranın sonuna yapışık kodlu telefonları ayırır
+  const digits = x => String(x || '').replace(/\D/g, '');
+  const norm = d => { if (d.startsWith('90') && d.length >= 12) d = d.slice(2); return d.startsWith('0') ? d.slice(1) : d; };
+  const parts = String(o.phone || '').split(/[\/|;]/).map(digits).filter(Boolean);
+  let d = norm(parts[0] || ''), ext = '', alt = null;
+  if (parts.length > 1) {
+    ext = parts.slice(1).join('');                     // "/" sonrası ikinci telefon değil, sipariş kodudur
+  } else if (d.length > 10) { ext = d.slice(10); d = d.slice(0, 10); }
+  if (d.length < 10) return d ? { href: 'tel:' + d, ext: '', alt: null } : null;
+  d = d.slice(0, 10);
+  if (!ext && o.phone2) { const p2 = digits(o.phone2); if (p2 && p2.length <= 8) ext = p2; }
+  const pause = typeof DIAL_PAUSE !== 'undefined' ? DIAL_PAUSE : ',,';
+  const suf = typeof DIAL_SUFFIX !== 'undefined' ? encodeURIComponent(DIAL_SUFFIX) : '';
+  return { href: 'tel:+90' + d + (ext ? pause + ext + suf : ''), ext, alt };
+}
+
+// ---- Yeni sipariş bildirimi ----
+function beep() {
+  try {
+    const c = audioCtx || (audioCtx = new (window.AudioContext || window.webkitAudioContext)());
+    if (c.state === 'suspended') c.resume();
+    [0, 0.3, 0.6].forEach(t => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.frequency.value = 880; g.gain.value = 0.35; o.connect(g); g.connect(c.destination);
+      o.start(c.currentTime + t); o.stop(c.currentTime + t + 0.18);
+    });
+  } catch (e) {}
+}
+function alertNew(n) {
+  noticeBad = false;
+  notice = n > 1 ? `${n} yeni sipariş geldi` : 'Yeni sipariş geldi';
+  beep();
+  try { navigator.vibrate && navigator.vibrate([300, 150, 300, 150, 300]); } catch (e) {}
+  clearTimeout(alertNew.t); alertNew.t = setTimeout(() => { notice = ''; draw(); }, 20000);
+}
+
+function alertGone(list) {
+  noticeBad = true;
+  notice = `${list} listenden kalktı (iptal, kapatıldı veya başka kuryeye atandı)`;
+  beep();
+  try { navigator.vibrate && navigator.vibrate([500, 200, 500]); } catch (e) {}
+  clearTimeout(alertNew.t); alertNew.t = setTimeout(() => { notice = ''; draw(); }, 30000);
+}
+
+// ---- Sipariş işlemleri ----
+function getPos() {                                   // teslim anındaki konum (yeni değilse hızlıca yeniden dener)
+  return new Promise(res => {
+    if (cur && Date.now() - cur.t < 60000) return res(cur);
+    if (!navigator.geolocation) return res(null);
+    navigator.geolocation.getCurrentPosition(p => res({ lat: p.coords.latitude, lng: p.coords.longitude }), () => res(cur && Date.now() - cur.t < 600000 ? cur : null),
+      { enableHighAccuracy: true, timeout: 3500, maximumAge: 30000 });
+  });
+}
+async function startAll() {                           // bekleyen tüm paketler tek dokunuşla yola çıkar
+  visibleOrders().filter(o => o.local_status === 'bekliyor').forEach(o =>
+    queue.push({ fn: 'adk_courier_start', args: { p_order_id: o.adisyo_id }, id: o.adisyo_id, a: 'start' }));
+  save('q', queue); msg = ''; draw();
+  await flush(); refresh();
+}
+async function act(a, id, pay) {
+  const o = orders.find(x => x.adisyo_id === id) || {};
+  const pos = a === 'done' ? await getPos() : null;
+  const spec = { start: ['adk_courier_start', { p_order_id: id }], done: ['adk_courier_deliver', { p_order_id: id, p_payment: null, p_lat: pos ? pos.lat : null, p_lng: pos ? pos.lng : null }],
+                 rel: ['adk_courier_release', { p_order_id: id, p_reason: pay }] }[a];
+  if (!spec) return;
+  if (a === 'done' || a === 'rel') mine.add(id);
+  const pt = (a === 'done' && payPick) || o.payment_type || (/kart|kredi/i.test(o.adisyo_payment || '') ? 'kart' : 'nakit');
+  queue.push({ fn: spec[0], args: spec[1], id, a, pay: a === 'done' ? pt : pay, total: Number(o.total) || 0 }); save('q', queue);
+  if (a === 'done') { openPay = null; payPick = null; } if (a === 'rel') openRel = null;
+  msg = ''; draw();
+  await flush(); refresh();
+}
+
+// kuyruktaki (henüz sunucuya gitmemiş) işlemleri ekrana yansıt
+function visibleOrders() {
+  const gone = new Set(queue.filter(q => q.a === 'done' || q.a === 'rel').map(q => q.id));
+  const started = new Set(queue.filter(q => q.a === 'start').map(q => q.id));
+  let list = orders.filter(o => !gone.has(o.adisyo_id)).map(o => started.has(o.adisyo_id) ? { ...o, local_status: 'yolda' } : o);
+  const pos = id => { const i = ord.indexOf(id); return i < 0 ? 1e6 : i; };
+  return list.map((o, i) => [o, i]).sort((x, y) => pos(x[0].adisyo_id) - pos(y[0].adisyo_id) || x[1] - y[1]).map(x => x[0]);
+}
+function dispSum() {
+  const s = { packages: sum.packages || 0, nakit: +sum.nakit || 0, kart: +sum.kart || 0, online: +sum.online || 0 };
+  for (const q of queue) if (q.a === 'done') { s.packages++; s[q.pay] = (s[q.pay] || 0) + q.total; }
+  return s;
+}
+function move(id, d) {
+  const ids = visibleOrders().map(o => o.adisyo_id), i = ids.indexOf(id), j = i + d;
+  if (i < 0 || j < 0 || j >= ids.length) return;
+  [ids[i], ids[j]] = [ids[j], ids[i]]; ord = ids; save('ord', ord); draw();
+}
+const hm = t => t ? new Date(t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '';
+const PAYN = { nakit: 'Nakit', kart: 'Kart', online: 'Online' };
+function delsHtml(list, title, withList) {
+  const t = { nakit: 0, kart: 0, online: 0 }, durs = [];
+  list.forEach(d => { if (t[d.payment_type] !== undefined) t[d.payment_type] += +d.total || 0;
+    if (d.picked_at && d.delivered_at) durs.push((new Date(d.delivered_at) - new Date(d.picked_at)) / 60000); });
+  const avg = durs.length ? Math.round(durs.reduce((a, b) => a + b, 0) / durs.length) : null;
+  const rows = withList ? [...list].reverse().map(d => `<div class="dl ${d.adisyo_id ? 'clk' : ''}" ${d.adisyo_id ? `data-a="dd" data-id="${d.adisyo_id}"` : ''}><span><b>${hm(d.delivered_at)}</b> · #${d.order_no ?? ''} ${esc(d.region)}</span>
+    <span><b>${tl(d.total)}</b> <small class="mut">${PAYN[d.payment_type] || ''}</small></span></div>`).join('') || '<p class="mut">Henüz teslimat yok.</p>' : '';
+  return `<div class="panel"><h3>${title}</h3>
+    <div class="kv"><span class="mut">Teslim edilen</span><b>${list.length} paket</b>
+    ${avg !== null ? `<span class="mut">Ortalama süre</span><b>${avg} dk</b>` : ''}
+    ${list.length ? `<span class="mut">Saat aralığı</span><b>${hm(list[0].delivered_at)} – ${hm(list[list.length - 1].delivered_at)}</b>` : ''}
+    <span class="mut">Nakit</span><b class="ok" style="font-size:18px">${tl(t.nakit)}</b>
+    <span class="mut">Kart</span><b>${tl(t.kart)}</b><span class="mut">Online</span><b>${tl(t.online)}</b></div>
+    ${queue.some(q => q.a === 'done') ? '<p class="err" style="font-size:13px;margin:10px 0 0">İnternet gelmeyen teslimatlar henüz bu listede yok.</p>' : ''}
+    ${withList ? '' : orders.length ? `<p class="err" style="font-size:13px;margin:10px 0 0">Üzerinde ${orders.length} aktif paket var.</p>` : ''}
+    ${rows}${withList ? '' : '<button class="sm" data-a="vclose" style="margin-top:12px;width:100%">Kapat</button>'}</div>`;
+}
+async function openDels() {
+  try { dels = (await rpc('adk_courier_deliveries', { p_token: tok })) || []; view = 'list'; msg = ''; }
+  catch (e) { msg = e.net ? 'İnternet yok, liste açılamadı' : e.message; }
+  draw();
+}
+
+async function saveNote(id) {
+  try {
+    await rpc('adk_courier_set_note', { p_token: tok, p_order_id: id, p_note: noteTxt });
+    const o = orders.find(x => x.adisyo_id === id); if (o) o.addr_note = noteTxt.trim() || null;
+    editNote = null; msg = '';
+  } catch (e) { msg = e.net ? 'İnternet yok, not kaydedilemedi' : e.message; }
+  draw();
+}
+document.addEventListener('input', e => { if (e.target.id === 'nt') noteTxt = e.target.value; });
+const fq = q => Number(q).toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+// Kurye için gereksiz satırlar ("Ekstra içecek istemiyorum" gibi) gizlenir. Yeni kalıp eklemek için listeye yaz.
+const HIDE = [/ekstra\s+.*stemiyor/i];
+const hid = t => HIDE.some(r => r.test(String(t || '')));
+function itemsHtml(o) {
+  const all = o.items; if (!Array.isArray(all) || !all.length) return '';
+  const it = all.map((p, i) => ({ ...p, i, ex: (p.ex || []).filter(x => !hid(x)), ft: (p.ft || []).filter(x => !hid(x)), note: hid(p.note) ? '' : p.note })).filter(p => !hid(p.n));
+  if (!it.length) return '';
+  const done = (ck[o.adisyo_id] || []), open = !!openItems[o.adisyo_id];
+  const n = it.filter(p => !p.sub).reduce((a, p) => a + (+p.q || 1), 0);
+  const left = it.filter(p => !p.sub && !done.includes(p.i)).length;
+  const doneN = it.filter(p => done.includes(p.i)).length;
+  return `<div class="items"><button class="ih" data-a="items" data-id="${o.adisyo_id}">İçerik · ${fq(n)} ürün<span>${doneN ? (left ? left + ' kaldı' : 'hepsi tamam') : (open ? 'Gizle' : 'Göster')}</span></button>` + (open ? it.map(p =>
+    `<div class="it ${done.includes(p.i) ? 'dn' : ''}" data-a="tick" data-id="${o.adisyo_id}" data-i="${p.i}" style="${p.sub ? 'padding-left:18px' : ''}"><span class="ck">${done.includes(p.i) ? '<svg class="i" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#0d1a12;stroke-width:3">' + P.chk + '</svg>' : ''}</span>
+      <span class="tt">${p.sub ? '↳ ' : ''}<b>${fq(p.q)}×</b> ${esc(p.n)}${p.ft.length ? `<small class="mut">${esc(p.ft.join(', '))}</small>` : ''}${p.ex.length ? `<small class="err">Çıkar: ${esc(p.ex.join(', '))}</small>` : ''}${p.note ? `<small style="color:var(--warn)">“${esc(p.note)}”</small>` : ''}</span></div>`).join('') : '') + '</div>';
+}
+
+function card(o, idx, total, bulk) {
+  const id = o.adisyo_id, online = o.payment_type === 'online', go = o.local_status === 'yolda';
+  const nav = navUrl(o), nav2 = searchUrl(o), dc = dialInfo(o);
+  const pay = online ? `<div class="pay paid"><span style="display:flex;gap:8px;align-items:center">${ico('chk')}Online ödendi, tahsilat yok</span><span class="amt">${tl(o.total)}</span></div>`
+    : `<div class="pay"><span class="l"><span>Tahsil et</span><b>${esc(o.adisyo_payment || 'Nakit')}</b></span><span class="amt">${tl(o.total)}</span></div>`;
+  let action;
+  if (openRel === id) action = `<div class="cf"><div class="q">Neden bırakıyorsun?</div>
+       <button class="big warn" data-a="rel" data-id="${id}" data-p="yanlis">Yanlışlıkla üzerime atıldı</button>
+       <button class="big warn" data-a="rel" data-id="${id}" data-p="ulasilamadi">Müşteriye ulaşılamadı</button>
+       <button class="sm tx" data-a="relno">Vazgeç</button></div>`;
+  else if (openPay !== id) { const kt = !online && o.payment_type === 'kart';
+    action = `<button class="big ${online ? 'ok2' : kt ? 'pk' : 'pn'}" data-a="pay" data-id="${id}">${online ? ico('chk') + ' Teslim Et' : kt ? ico('card') + ' KART' : ico('cash') + ' NAKİT'}</button><button class="sm tx" data-a="relopen" data-id="${id}">Geri bırak</button>`; }
+  else action = `<div class="cf"><div class="q">#${o.order_no ?? ''} teslim edildi mi?</div><div class="two"><button class="sm" data-a="payno" style="padding:16px">Vazgeç</button><button class="big ok2" data-a="done" data-id="${id}">Evet, teslim edildi</button></div></div>`;
+  const noteBox = editNote === id
+    ? `<div class="cf"><textarea id="nt" maxlength="200" rows="2" placeholder="Örn: zil bozuk, arka kapıdan gir" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:15px">${esc(noteTxt)}</textarea>
+      <div class="two" style="grid-template-columns:1fr 1fr"><button class="sm" data-a="noteno">Vazgeç</button><button class="big" data-a="notesave" data-id="${id}" style="padding:12px;font-size:16px">Kaydet</button></div></div>`
+    : (o.addr_note ? `<div class="nt">${ico('pin')}<span>${esc(o.addr_note)}</span></div>` : '');
+  return `<div class="card ${go ? 'go' : ''}"><div class="cb">
+    <div class="ch"><span class="no">${total > 1 ? (idx + 1) + '. ' : ''}#${o.order_no ?? ''}</span><span class="chip st">${go ? 'Yolda' : 'Bekliyor'} · ${agoMin(o.created_at)}</span><span class="sp"></span>${total > 1 ? `<span class="ar"><button data-a="up" data-id="${id}" aria-label="Yukarı">▲</button><button data-a="down" data-id="${id}" aria-label="Aşağı">▼</button></span>` : ''}</div>
+    <div><div class="cn">${esc(o.customer_name)}</div><div class="ad">${esc(o.address)}${o.region ? ` <span class="mut">· ${esc(o.region)}</span>` : ''}${o.loc_fixed ? ' <small>· konum düzeltildi</small>' : ''}</div></div>
+    ${o.note ? `<div class="nt warnb">${ico('info')}<span>${esc(o.note)}</span></div>` : ''}${noteBox}
+    ${pay}${itemsHtml(o)}
+    <div class="acts"><a class="ab" href="${nav}" target="_blank">${ico('nav')}Yol tarifi${o.lat ? '' : ' (adres)'}</a>${dc ? `<a class="ab" href="${dc.href}">${ico('phone')}Ara${dc.ext ? ' (kodlu)' : ''}</a>` : ''}${editNote === id ? '' : `<button class="ab" data-a="noteopen" data-id="${id}">${ico('note')}${o.addr_note ? 'Notu düzenle' : 'Adres notu'}</button>`}</div>
+    <div class="qm"><button class="qb" data-a="qm" data-k="kapida" data-id="${id}">${ico('pin')}Kapıdayım</button><button class="qb" data-a="qm" data-k="ulasamiyor" data-id="${id}">${ico('phone')}Ulaşamıyorum</button></div>
+    ${dc && dc.ext ? `<div class="ext">Arama bağlanınca <b>${esc(dc.ext)}</b> otomatik tuşlanır</div>` : ''}
+    <div class="cf">${action}</div></div></div>`;
+}
+
+function boardHtml() {
+  const r = board.find(x => x.me); if (!r) return '';
+  return `<div class="panel brd"><div class="bh">${ico('trophy')}<b>Bugünkü performansın</b></div><div class="br me"><span class="bn">${r.packages} paket</span><small>${r.avg_min != null ? 'ort. ' + r.avg_min + ' dk teslim' : ''}</small></div></div>`;
+}
+function draw() {
+  const app = $('#app'), err = msg ? `<p class="err">${esc(msg)}</p>` : '';
+  if (!tok) {
+    app.innerHTML = `<div class="au"><div class="logo"><svg width="52" height="52" viewBox="0 0 24 24" fill="#0f1114" aria-hidden="true"><path d="M12 2 20.5 20.5 12 16 3.5 20.5Z"/></svg></div><h1>İzci Kurye</h1><div class="sub">Teslimat uygulaması</div>${err ? `<p class="er">${esc(msg)}</p>` : ''}
+      <label class="f">Restoran kodu</label><div class="in"><svg class="ic" viewBox="0 0 24 24"><path d="M4 10l1.5-5h13L20 10M4 10v9h16v-9M4 10h16M9 19v-5h6v5"/></svg><input id="c" placeholder="Restoranın verdiği kod" autocomplete="off" autocapitalize="none" spellcheck="false" value="${esc((rem && rem.c) || localStorage.getItem('code') || '')}"></div>
+      <label class="f">Kullanıcı adı</label><div class="in"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><input id="n" placeholder="Kullanıcı adı" autocomplete="username" value="${esc(rem ? rem.n : name)}"></div>
+      <label class="f">PIN</label><div class="in"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><input id="p" type="password" inputmode="numeric" placeholder="PIN" autocomplete="current-password" value="${esc(rem ? rem.p : '')}"><button type="button" class="eye" data-a="eye" aria-label="Göster/gizle"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <label class="rem"><input id="r" type="checkbox" ${rem ? 'checked' : ''}> Beni hatırla</label>
+      <button class="gobtn" data-a="login">Giriş Yap</button></div>`;
+    return;
+  }
+  const vis = visibleOrders(), ds = dispSum(), wait = vis.filter(o => o.local_status === 'bekliyor'), bulk = false;
+  const tot = ds.nakit + ds.kart + ds.online || 1, pc = v => (v / tot * 100).toFixed(1) + '%';
+  const empty = `<div class="empty"><svg viewBox="0 0 120 120" fill="none" stroke="#2f3532" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="60" r="52"/><circle cx="38" cy="78" r="12" stroke="#5baa7e"/><circle cx="84" cy="78" r="12" stroke="#5baa7e"/><path d="M38 78l12-26h18M50 52l10 26H38M60 78l16-26h8M72 40h10" stroke="#5baa7e"/></svg><b>${shift ? 'Sipariş bekleniyor' : 'Vardiyayı başlat'}</b>${shift ? 'Yeni sipariş gelince sesli haber veririz.' : 'Sağ alttaki butona dokunarak vardiyayı başlat.'}</div>`;
+  app.innerHTML = `<header class="hd"><div class="av">${esc((name || '?').trim().charAt(0).toUpperCase())}</div><div class="who"><b>${esc(name)}</b>${gpsStatus()}</div><button class="ib" data-a="out" aria-label="Çıkış">${ico('out')}</button></header>
+    ${notice ? alertBox(noticeBad ? 'warn' : 'chk', `<b>${esc(notice)}</b>`, noticeBad ? 'bad' : 'good', 'data-a="dismiss"') : ''}${gpsBanner()}${!online ? alertBox('cloud', '<b>İnternet yok.</b> Son bilgiler gösteriliyor.') : ''}${queue.length ? alertBox('cloud', `<b>${queue.length}</b> işlem internet gelince otomatik gönderilecek`, 'info') : ''}
+    ${view === 'shift' ? delsHtml(dels, 'Vardiya özeti', false) : ''}
+    <div class="duo">
+      <button class="sc act ${view !== 'list' ? 'on' : ''}" data-a="vclose"><span class="lb">Aktif siparişler</span><span class="n1">${vis.length}</span></button>
+      <button class="sc dn ${view === 'list' ? 'on' : ''}" data-a="dels"><span class="lb">Teslim edilen siparişler <i>${ico('chev')}</i></span><span class="n1">${ds.packages}</span></button>
+    </div>
+    ${boardHtml()}
+    ${view === 'list' ? delsHtml(dels, 'Bugünkü teslimatlarım', true) : ''}
+    ${msg ? alertBox('warn', esc(msg), 'bad') : ''}
+    ${view === 'list' ? '' : vis.length ? vis.map((o, i) => card(o, i, vis.length, bulk)).join('') : empty}${pillHtml()}${sheetHtml()}${ddHtml()}`;
+}
+
+document.addEventListener('click', e => {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch (err) {} }  // ses izni için ilk dokunuş
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a, id = Number(b.dataset.id);
+  if (a === 'login') login();
+  else if (a === 'out') logout();
+  else if (a === 'shift') { sheet = false; toggleShift(); }
+  else if (a === 'sheet') { sheet = true; draw(); }
+  else if (a === 'sheetx') { if (e.target.closest('[data-a="nop"]') && !b.classList.contains('sm') && b.dataset.a === 'sheetx') return; sheet = false; draw(); }
+  else if (a === 'nop') return;
+  else if (a === 'brk') toggleBreak();
+  else if (a === 'eye') { const i = $('#p'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; }
+  else if (a === 'retry') retryGps();
+  else if (a === 'bgset') { try { (TRK() || BG()).openSettings(); } catch (e) {} }
+  else if (a === 'pay') { openPay = id; payPick = b.dataset.p || null; draw(); }
+  else if (a === 'payno') { openPay = null; payPick = null; draw(); }
+  else if (a === 'relopen') { openRel = id; draw(); }
+  else if (a === 'relno') { openRel = null; draw(); }
+  else if (a === 'qm') sendMsg(b.dataset.k, id || null);
+  else if (a === 'items') { openItems[id] = !openItems[id]; draw(); }
+  else if (a === 'dismiss') { notice = ''; draw(); }
+  else if (a === 'up' || a === 'down') move(id, a === 'up' ? -1 : 1);
+  else if (a === 'dels') openDels();
+  else if (a === 'dd') { dsel = id; draw(); }
+  else if (a === 'ddx') { dsel = null; draw(); }
+  else if (a === 'startall') startAll();
+  else if (a === 'noteopen') { const o = orders.find(x => x.adisyo_id === id); noteTxt = o && o.addr_note || ''; editNote = id; draw(); const t = $('#nt'); if (t) t.focus(); }
+  else if (a === 'noteno') { editNote = null; draw(); }
+  else if (a === 'notesave') saveNote(id);
+  else if (a === 'vclose') { view = null; draw(); }
+  else if (a === 'tick') { const i = Number(b.dataset.i), l = ck[id] || (ck[id] = []), k = l.indexOf(i); k < 0 ? l.push(i) : l.splice(k, 1); save('ck', ck); draw(); }
+  else act(a, id, b.dataset.p);
+});
+
+draw();
+if (tok) { refresh(); if (shift) startGps(); }
+setInterval(refresh, 8000);
+window.addEventListener('online', refresh);
+</script></body></html>

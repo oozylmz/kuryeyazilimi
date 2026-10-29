@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>İzci Kurye · Sahip Paneli</title>
+<script src="config.js"></script>
+<style>
+:root{--bg:#0f1114;--card:#181b20;--card2:#1f2329;--line:#2b3038;--tx:#f2f4f8;--mut:#98a0ab;--ok:#5baa7e;--go:#ff4d4d;--warn:#f59e0b;--err:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px 60px}
+button,input,select,textarea{font:inherit;color:var(--tx);border-radius:10px;border:1px solid #333a47;background:var(--card2);padding:9px 12px}
+button{cursor:pointer;border:0;background:#2b3240;font-weight:600;white-space:nowrap}
+button:hover{background:#343c4c}
+button.pri{background:var(--go);color:#0f1114;font-weight:700}
+button.pri:hover{background:#ff6666}
+button.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+button.dng{color:#ff8a8a}
+button:disabled{opacity:.55;cursor:wait}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--go)}
+.hd{position:sticky;top:0;z-index:50;background:var(--bg);display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--line);margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;letter-spacing:-.3px;margin-right:auto}
+.brand .bm{width:32px;height:32px;border-radius:10px;background:var(--go);display:grid;place-items:center}
+.brand small{font-weight:600;color:var(--mut);font-size:13px;letter-spacing:0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.tile b{display:block;font-size:28px;letter-spacing:-.5px;line-height:1.1}
+.tile span{color:var(--mut);font-size:13px}
+.tools{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.tools input{flex:1;min-width:200px}
+.tn{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.tn.off{opacity:.72}
+.th{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.th h2{margin:0;font-size:19px;letter-spacing:-.3px}
+.th .sp{flex:1}
+.pill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:#2b3240;color:var(--mut);white-space:nowrap}
+.pill.ok{background:#16301f;color:#7bd69b}.pill.bad{background:#3a1717;color:#ff8a8a}.pill.warn{background:#3a2a0c;color:#f5b75a}
+.note{color:var(--mut);font-size:13px;margin:-4px 0 10px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th{font-size:12px;font-weight:700;color:var(--mut);text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 8px;text-align:right;border-bottom:1px solid #22262d;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th.l,td.l{text-align:left}
+td.act{text-align:right}
+td.act button{margin-left:4px}
+tr:last-child td{border-bottom:0}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:#555}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--err)}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0f1114;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:13px}
+.adm{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.adm .lb{color:var(--mut);font-size:13px;margin-right:2px}
+.au{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:4px 6px 4px 12px;font-size:13px}
+.au.off{opacity:.55}
+.au small{color:var(--mut)}
+.empty{color:var(--mut);padding:30px;text-align:center}
+.err{color:var(--err)}.mut{color:var(--mut)}.ok{color:var(--ok)}
+/* giriş */
+.login{max-width:340px;margin:0 auto;padding-top:9vh;text-align:center}
+.login .logo{width:84px;height:84px;border-radius:50%;background:var(--go);display:grid;place-items:center;margin:0 auto 18px}
+.login h1{margin:0;font-size:28px;letter-spacing:-.5px}
+.login .sub{color:var(--mut);margin:6px 0 28px}
+.login label{display:block;text-align:left;font-weight:600;margin:0 0 6px}
+.login input{width:100%;padding:13px 14px;margin:0 0 16px;font-size:16px;border-radius:12px}
+.login button{width:100%;padding:14px;font-size:17px;border-radius:12px}
+/* pencere */
+#mdl{position:fixed;inset:0;background:#000b;z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto}
+.bx{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;width:100%;max-width:560px}
+.bx.wide{max-width:760px}
+.bx .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;font-size:17px}
+.bx label{display:block;font-size:13px;font-weight:600;color:var(--mut);margin:12px 0 5px}
+.bx input,.bx select,.bx textarea{width:100%}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.g2{grid-template-columns:1fr}}
+.sec{margin:18px 0 2px;padding-top:14px;border-top:1px solid var(--line);font-weight:700}
+.sec small{font-weight:500;color:var(--mut)}
+.hint{color:var(--mut);font-size:12.5px;margin-top:5px}
+.msg{min-height:20px;margin-top:10px}
+.foot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.inl{display:flex;gap:6px}.inl input{flex:1}
+.share{white-space:pre-wrap;background:#0f1114;border:1px solid var(--line);border-radius:12px;padding:14px;font:13.5px/1.6 ui-monospace,Menlo,Consolas,monospace;user-select:all}
+.bar{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:13px}
+.bar span.d{width:74px;color:var(--mut);flex:none}
+.bar i{display:block;height:14px;border-radius:5px;background:var(--go);min-width:2px}
+.bar b{flex:none}
+.st4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.st4 div{background:var(--card2);border-radius:12px;padding:10px 12px}
+.st4 b{display:block;font-size:22px}.st4 span{color:var(--mut);font-size:12px}
+@media(max-width:560px){.st4{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<div class="wrap" id="app"></div>
+<script>
+if (typeof SUPABASE_URL === 'undefined') document.body.innerHTML = '<p style="padding:20px">config.js bulunamadı.</p>';
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const num = n => Number(n || 0).toLocaleString('tr-TR');
+const tl = n => Number(n || 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺';
+const LOGO = '<svg width="18" height="18" viewBox="0 0 24 24" fill="#0f1114" aria-hidden="true"><path d="M12 2 20.5 20.5 12 16 3.5 20.5Z"/></svg>';
+
+let tok = null, data = { tenants: [] }, q = '', msg = '';
+try { tok = localStorage.getItem('otok'); } catch (e) {}
+
+async function rpc(fn, args = {}) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(args)
+  });
+  const j = await r.json().catch(() => null);
+  if (!r.ok) {
+    if (j && /oturum/.test(j.message || '')) logout();
+    throw new Error((j && j.message) || 'Bağlantı hatası');
+  }
+  return j;
+}
+const T = (fn, args = {}) => rpc(fn, { p_token: tok, ...args });
+
+// ---------- giriş ----------
+async function login() {
+  const u = $('#u').value.trim(), p = $('#p').value;
+  try {
+    const j = await rpc('adk_owner_login', { p_user: u, p_pass: p });
+    if (!j.ok) { msg = j.error; return render(); }
+    tok = j.token; try { localStorage.setItem('otok', tok); } catch (e) {}
+    msg = ''; await load();
+  } catch (e) { msg = e.message; render(); }
+}
+function logout() { tok = null; try { localStorage.removeItem('otok'); } catch (e) {} closeMdl(); render(); }
+
+async function load(silent) {
+  try { data = await T('adk_owner_overview'); render(); }
+  catch (e) { if (!silent) { msg = e.message; render(); } }
+}
+
+// ---------- sayfa ----------
+function pollBadge(b) {
+  if (!b.adisyo) return '<span class="dot"></span><span class="mut">Adisyo yok</span>';
+  const s = b.last_poll_sec;
+  if (s == null) return '<span class="dot bad"></span>hiç çekilmedi';
+  const t = s < 60 ? s + ' sn' : s < 3600 ? Math.round(s / 60) + ' dk' : Math.round(s / 3600) + ' sa';
+  return `<span class="dot ${s < 180 ? 'ok' : s < 900 ? 'warn' : 'bad'}"></span>${t} önce`;
+}
+function paidPill(t) {
+  if (!t.paid_until) return '';
+  const d = new Date(t.paid_until + 'T00:00:00'), days = Math.ceil((d - new Date()) / 864e5);
+  const lbl = d.toLocaleDateString('tr-TR');
+  return days < 0 ? `<span class="pill bad" title="Abonelik bitişi">Abonelik bitti · ${lbl}</span>`
+       : days <= 7 ? `<span class="pill warn" title="Abonelik bitişi">${days} gün kaldı · ${lbl}</span>`
+       : `<span class="pill" title="Abonelik bitişi">${lbl}</span>`;
+}
+function render() {
+  const app = $('#app');
+  if (!tok) {
+    app.innerHTML = `<div class="login"><div class="logo"><svg width="46" height="46" viewBox="0 0 24 24" fill="#0f1114" aria-hidden="true"><path d="M12 2 20.5 20.5 12 16 3.5 20.5Z"/></svg></div>
+      <h1>İzci Kurye</h1><div class="sub">Sahip paneli</div>${msg ? `<p class="err">${esc(msg)}</p>` : ''}
+      <label>Kullanıcı adı</label><input id="u" autocomplete="username" autocapitalize="none" spellcheck="false">
+      <label>Şifre</label><input id="p" type="password" autocomplete="current-password">
+      <button class="pri" id="go">Giriş Yap</button></div>`;
+    return;
+  }
+  const ts = data.tenants || [];
+  const all = ts.flatMap(t => t.branches.map(b => ({ t, b })));
+  const act = all.filter(x => x.t.active && x.b.active);
+  const sum = k => act.reduce((a, x) => a + Number(x.b[k] || 0), 0);
+  const qq = q.trim().toLowerCase();
+  const shown = ts.filter(t => !qq || t.name.toLowerCase().includes(qq) || (t.note || '').toLowerCase().includes(qq)
+    || t.branches.some(b => b.name.toLowerCase().includes(qq) || b.code.includes(qq)) || t.admins.some(a => a.username.toLowerCase().includes(qq)));
+  app.innerHTML = `<div class="hd"><div class="brand"><span class="bm">${LOGO}</span>İzci Kurye <small>Sahip paneli</small></div>
+      <button class="pri" data-a="new">+ Yeni müşteri</button><button data-a="mypw">Şifrem</button><button data-a="out">Çıkış</button></div>
+    ${msg ? `<p class="err">${esc(msg)}</p>` : ''}
+    <div class="tiles">
+      <div class="tile"><b>${ts.filter(t => t.active).length}</b><span>Aktif restoran</span></div>
+      <div class="tile"><b>${act.length}</b><span>Aktif şube</span></div>
+      <div class="tile"><b>${num(sum('today'))}</b><span>Bugün çıkan paket</span></div>
+      <div class="tile"><b>${num(sum('month'))}</b><span>Bu ay çıkan paket</span></div>
+      <div class="tile"><b>${num(sum('on_shift'))}<small class="mut" style="font-size:15px"> / ${num(sum('couriers'))}</small></b><span>Vardiyadaki kurye</span></div>
+    </div>
+    <div class="tools"><input id="q" placeholder="Restoran, şube, kod veya kullanıcı ara…" value="${esc(q)}"></div>
+    ${shown.length ? shown.map(tenantHtml).join('') : `<div class="empty">${ts.length ? 'Aramaya uyan restoran yok.' : 'Henüz müşteri yok. “+ Yeni müşteri” ile ilk restoranı ekle.'}</div>`}`;
+}
+function tenantHtml(t) {
+  const rows = t.branches.map(b => `<tr>
+      <td class="l"><b>${esc(b.name)}</b> ${b.active ? '' : '<span class="pill bad">Kapalı</span>'}</td>
+      <td class="l"><span class="code">${esc(b.code)}</span></td>
+      <td class="l">${pollBadge(b)}</td>
+      <td>${b.on_shift}/${b.couriers}</td><td>${b.open_now}</td><td><b>${num(b.today)}</b></td><td>${num(b.month)}</td>
+      <td class="act"><button class="sm pri" data-imp="${b.id}" title="Bu şubenin yönetici paneline gir">Yönetici olarak gir</button><button class="sm" data-st="${b.id}">İstatistik</button><button class="sm" data-eb="${b.id}">Düzenle</button></td></tr>`).join('');
+  const adm = t.admins.map(a => {
+    const br = a.branch_id ? (t.branches.find(b => b.id === a.branch_id) || {}).name : null;
+    const ll = a.last_login ? new Date(a.last_login).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'hiç girmedi';
+    return `<span class="au ${a.active ? '' : 'off'}"><b>${esc(a.username)}</b><small>${br ? esc(br) + ' · ' : ''}${ll}${a.active ? '' : ' · kapalı'}</small><button class="sm" data-ea="${a.id}">Düzenle</button></span>`;
+  }).join('');
+  return `<div class="tn ${t.active ? '' : 'off'}"><div class="th"><h2>${esc(t.name)}</h2>
+      ${t.active ? '<span class="pill ok">Aktif</span>' : '<span class="pill bad">Kapalı</span>'}${paidPill(t)}<span class="sp"></span>
+      <button class="sm" data-et="${t.id}">Restoranı düzenle</button><button class="sm" data-ab="${t.id}">+ Şube</button><button class="sm" data-aa="${t.id}">+ Kullanıcı</button></div>
+    ${t.note ? `<div class="note">${esc(t.note)}</div>` : ''}
+    <div class="scroll"><table><thead><tr><th>Şube</th><th class="l">Kod</th><th class="l">Adisyo çekimi</th><th>Kurye</th><th>Açık</th><th>Bugün</th><th>Bu ay</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="8" class="mut">Şube yok</td></tr>'}</tbody></table></div>
+    <div class="adm"><span class="lb">Yönetici kullanıcıları:</span>${adm || '<span class="mut">yok</span>'}</div></div>`;
+}
+
+// ---------- pencere yardımcıları ----------
+function closeMdl() { const m = $('#mdl'); if (m) m.remove(); }
+function dlg(html, wide) {
+  let m = $('#mdl'); if (!m) { m = document.createElement('div'); m.id = 'mdl'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="bx ${wide ? 'wide' : ''}">${html}</div>`;
+  const f = m.querySelector('input:not([type=checkbox]):not([type=date])'); if (f && !f.value) f.focus();
+}
+const title = (t) => `<div class="row"><b>${t}</b><button class="sm" data-mc="1">Kapat</button></div>`;
+const val = id => { const e = $('#' + id); return e ? e.value : ''; };
+const slug = s => String(s || '').toLowerCase().replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u')
+  .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 24);
+function genPass() {
+  const c = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789', a = new Uint32Array(10); crypto.getRandomValues(a);
+  return Array.from(a, x => c[x % c.length]).join('');
+}
+const tenantOf = id => data.tenants.find(t => t.id === id);
+const branchOf = id => { for (const t of data.tenants) { const b = t.branches.find(x => x.id === id); if (b) return { t, b }; } return {}; };
+
+// ---------- yeni müşteri (tek formda restoran + şube + yönetici) ----------
+function newDlg() {
+  dlg(`${title('Yeni müşteri')}
+    <label>Restoran adı *</label><input id="n_name" placeholder="Örn. Lezzet Dürüm">
+    <div class="g2"><div><label>Şube adı</label><input id="n_bname" value="Merkez"></div>
+    <div><label>Restoran kodu * <small>(kuryeler girer)</small></label><input id="n_code" autocapitalize="none" spellcheck="false" placeholder="lezzet-durum"></div></div>
+    <div class="g2"><div><label>Yönetici kullanıcı adı *</label><input id="n_user" autocapitalize="none" spellcheck="false"></div>
+    <div><label>Yönetici şifresi *</label><div class="inl"><input id="n_pass" value="${genPass()}"><button class="sm" data-a="gen" data-t="n_pass">Üret</button></div></div></div>
+    <div class="sec">Adisyo bağlantısı <small>(sonra da girebilirsin; girilmezse sipariş çekilmez)</small></div>
+    <div class="g2"><div><label>API Key</label><input id="n_key" autocomplete="off"></div><div><label>API Secret</label><input id="n_sec" autocomplete="off"></div></div>
+    <div class="g2"><div><label>Consumer</label><input id="n_con" value="KuryeTakip"></div><div><label>Şehir <small>(telefon siparişi konumu)</small></label><input id="n_city" placeholder="Sivas"></div></div>
+    <div class="sec">Diğer</div>
+    <div class="g2"><div><label>Not</label><input id="n_note" placeholder="Telefon, anlaşma…"></div><div><label>Abonelik bitişi</label><input id="n_paid" type="date"></div></div>
+    <div id="mm" class="msg err"></div>
+    <div class="foot"><button data-mc="1">Vazgeç</button><button class="pri" data-a="newsave">Oluştur</button></div>`, true);
+}
+async function newSave() {
+  const m = $('#mm'), name = val('n_name').trim(), code = val('n_code').trim().toLowerCase(), user = val('n_user').trim(), pass = val('n_pass');
+  if (!name || !code || !user || !pass) { m.textContent = 'Yıldızlı alanlar boş olamaz'; return; }
+  const btn = document.querySelector('[data-a=newsave]'); btn.disabled = true; m.textContent = '';
+  let tid = null;
+  try {
+    tid = await T('adk_owner_tenant_save', { p_id: null, p_name: name, p_note: val('n_note'), p_active: true, p_paid_until: val('n_paid') || null });
+    await T('adk_owner_branch_save', { p_id: null, p_tenant: tid, p_name: val('n_bname').trim() || 'Merkez', p_code: code, p_active: true,
+      p_key: val('n_key'), p_secret: val('n_sec'), p_consumer: val('n_con'), p_city: val('n_city') });
+    await T('adk_owner_admin_save', { p_id: null, p_tenant: tid, p_branch: null, p_username: user, p_password: pass, p_active: true });
+  } catch (e) {
+    // yarım kalan restoranı geri al (şube/yönetici eklenemediyse)
+    if (tid) { try { const d = await T('adk_owner_overview'); const t = d.tenants.find(x => x.id === tid); if (t && !t.branches.length) await T('adk_owner_tenant_delete', { p_tenant: tid }); } catch (e2) {} }
+    m.textContent = e.message; btn.disabled = false; return;
+  }
+  await load(true);
+  shareDlg(name, code, user, pass);
+}
+function shareDlg(name, code, user, pass) {
+  const base = location.origin;
+  const txt = `İzci Kurye – ${name}\n\nYönetici paneli: ${base}/admin.html\nKullanıcı adı: ${user}\nŞifre: ${pass}\n\nKurye uygulaması: ${base}/kurye.html\nRestoran kodu: ${code}\n(Kuryeler uygulamada önce restoran kodunu, sonra kendi adını ve PIN'ini girer. Kuryeleri ve PIN'lerini yönetici panelindeki “Kuryeler” sekmesinden belirlersin.)`;
+  dlg(`${title('Kurulum bilgileri hazır')}<p class="mut" style="margin-top:0">Bu bilgileri müşteriye gönder. Şifreyi bir daha göremezsin ama istediğin zaman değiştirebilirsin.</p>
+    <div class="share" id="sh">${esc(txt)}</div>
+    <div class="foot"><button data-mc="1">Kapat</button><button class="pri" data-a="copy">Kopyala</button></div>`);
+}
+
+// ---------- restoran / şube / kullanıcı düzenleme ----------
+function tenantDlg(id) {
+  const t = tenantOf(id) || {};
+  dlg(`${title('Restoranı düzenle')}
+    <label>Restoran adı</label><input id="t_name" value="${esc(t.name)}">
+    <label>Not</label><input id="t_note" value="${esc(t.note)}">
+    <div class="g2"><div><label>Abonelik bitişi</label><input id="t_paid" type="date" value="${esc(t.paid_until || '')}"></div>
+    <div><label>Durum</label><select id="t_act"><option value="1" ${t.active ? 'selected' : ''}>Aktif</option><option value="0" ${t.active ? '' : 'selected'}>Kapalı (giriş yapılamaz)</option></select></div></div>
+    <div class="hint">Kapatırsan restoranın yöneticisi ve kuryeleri anında oturumdan düşer, Adisyo çekimi durur. Veri silinmez.</div>
+    <div id="mm" class="msg err"></div>
+    <div class="foot"><button data-mc="1">Vazgeç</button><button class="pri" data-ts="${id}">Kaydet</button></div>`);
+}
+async function tenantSave(id) {
+  try {
+    await T('adk_owner_tenant_save', { p_id: id, p_name: val('t_name'), p_note: val('t_note'), p_active: val('t_act') === '1', p_paid_until: val('t_paid') || null });
+    closeMdl(); load();
+  } catch (e) { $('#mm').textContent = e.message; }
+}
+function branchDlg(id, tenantId) {
+  const x = id ? branchOf(id) : { t: tenantOf(tenantId), b: {} }, b = x.b;
+  dlg(`${title(id ? 'Şubeyi düzenle' : 'Şube ekle · ' + esc(x.t.name))}
+    <div class="g2"><div><label>Şube adı</label><input id="b_name" value="${esc(b.name || '')}"></div>
+    <div><label>Restoran kodu <small>(kuryeler girer)</small></label><input id="b_code" value="${esc(b.code || '')}" autocapitalize="none" spellcheck="false"></div></div>
+    <div class="g2"><div><label>Durum</label><select id="b_act"><option value="1" ${b.active !== false ? 'selected' : ''}>Aktif</option><option value="0" ${b.active === false ? 'selected' : ''}>Kapalı</option></select></div>
+    <div><label>Şehir <small>(telefon siparişi konumu)</small></label><input id="b_city" value="${esc(b.city || '')}"></div></div>
+    <div class="sec">Adisyo bağlantısı <small>${id ? (b.adisyo ? '· kayıtlı (güvenlik için gösterilmez; değiştirmek için doldur)' : '· henüz girilmemiş') : ''}</small></div>
+    <div class="g2"><div><label>API Key</label><input id="b_key" autocomplete="off" placeholder="${b.adisyo ? '•••••• (değiştirmek için yaz)' : ''}"></div>
+    <div><label>API Secret</label><input id="b_sec" autocomplete="off" placeholder="${b.adisyo ? '•••••• (değiştirmek için yaz)' : ''}"></div></div>
+    <div><label>Consumer</label><input id="b_con" value="${esc(b.consumer || 'KuryeTakip')}"></div>
+    ${id && b.adisyo ? '<label style="display:flex;gap:8px;align-items:center;margin-top:12px"><input id="b_clr" type="checkbox" style="width:auto"> Adisyo bilgisini sil (çekim durur)</label>' : ''}
+    <div id="mm" class="msg err"></div>
+    <div class="foot">${id ? `<button class="dng" data-bd="${id}" style="margin-right:auto">Şubeyi sil…</button>` : ''}<button data-mc="1">Vazgeç</button><button class="pri" data-bs="${id || ''}" data-tid="${tenantId || x.t.id}">Kaydet</button></div>`);
+}
+async function branchSave(id, tid) {
+  const clr = $('#b_clr') && $('#b_clr').checked;
+  try {
+    await T('adk_owner_branch_save', { p_id: id || null, p_tenant: tid, p_name: val('b_name'), p_code: val('b_code'), p_active: val('b_act') === '1',
+      p_key: clr ? '' : (val('b_key').trim() || null), p_secret: clr ? '' : (val('b_sec').trim() || null), p_consumer: val('b_con'), p_city: val('b_city') });
+    closeMdl(); load();
+  } catch (e) { $('#mm').textContent = e.message; }
+}
+function delBranchDlg(id) {
+  const { b } = branchOf(id);
+  dlg(`${title('Şubeyi sil')}<p>“${esc(b.name)}” şubesinin <b>tüm verisi</b> (siparişler, kuryeler, raporlar, ayarlar) kalıcı olarak silinir. Geri alınamaz.</p>
+    <label>Onay için restoran kodunu yaz: <span class="code">${esc(b.code)}</span></label><input id="d_code" autocomplete="off">
+    <div id="mm" class="msg err"></div>
+    <div class="foot"><button data-mc="1">Vazgeç</button><button class="pri" data-bdo="${id}">Kalıcı olarak sil</button></div>`);
+}
+async function delBranch(id) {
+  try { await T('adk_owner_branch_delete', { p_branch: id, p_confirm: val('d_code') }); closeMdl(); load(); } catch (e) { $('#mm').textContent = e.message; }
+}
+function adminDlg(id, tenantId) {
+  let a = {}, t;
+  if (id) { for (const x of data.tenants) { const f = x.admins.find(y => y.id === id); if (f) { a = f; t = x; } } } else t = tenantOf(tenantId);
+  const opts = `<option value="">Tüm şubeler</option>` + t.branches.map(b => `<option value="${b.id}" ${a.branch_id === b.id ? 'selected' : ''}>${esc(b.name)}</option>`).join('');
+  dlg(`${title(id ? 'Kullanıcıyı düzenle' : 'Yönetici kullanıcı ekle · ' + esc(t.name))}
+    <label>Kullanıcı adı</label><input id="a_user" value="${esc(a.username || '')}" autocapitalize="none" spellcheck="false" autocomplete="off">
+    <label>${id ? 'Yeni şifre <small>(boş bırakırsan değişmez)</small>' : 'Şifre'}</label>
+    <div class="inl"><input id="a_pass" autocomplete="off" value="${id ? '' : genPass()}" placeholder="${id ? 'değiştirmek için yaz' : ''}"><button class="sm" data-a="gen" data-t="a_pass">Üret</button></div>
+    <div class="g2"><div><label>Görebildiği şube</label><select id="a_br">${opts}</select></div>
+    <div><label>Durum</label><select id="a_act"><option value="1" ${a.active !== false ? 'selected' : ''}>Aktif</option><option value="0" ${a.active === false ? 'selected' : ''}>Kapalı</option></select></div></div>
+    <div class="hint">Şifre ya da kullanıcı adı değişince o kullanıcının açık oturumları kapanır.</div>
+    <div id="mm" class="msg err"></div>
+    <div class="foot">${id ? `<button class="dng" data-ad="${id}" style="margin-right:auto">Sil</button>` : ''}<button data-mc="1">Vazgeç</button><button class="pri" data-as="${id || ''}" data-tid="${t.id}">Kaydet</button></div>`);
+}
+async function adminSave(id, tid) {
+  const pass = val('a_pass');
+  try {
+    await T('adk_owner_admin_save', { p_id: id || null, p_tenant: tid, p_branch: val('a_br') || null, p_username: val('a_user'), p_password: pass || null, p_active: val('a_act') === '1' });
+    closeMdl(); await load(true);
+    if (pass) { const t = tenantOf(tid); const br = t.branches[0]; shareDlg(t.name, br ? br.code : '', val('a_user') || '', pass); }
+  } catch (e) { const m = $('#mm'); if (m) m.textContent = e.message; }
+}
+async function adminDel(id) {
+  if (!confirm('Bu kullanıcı silinsin mi?')) return;
+  try { await T('adk_owner_admin_delete', { p_id: id }); closeMdl(); load(); } catch (e) { $('#mm').textContent = e.message; }
+}
+
+// ---------- uzaktan müdahale ----------
+async function impersonate(id) {
+  const w = window.open('', '_blank');          // açılır pencere engeline takılmamak için önce boş sekme
+  try {
+    const t = await T('adk_owner_impersonate', { p_branch: id });
+    const url = new URL('admin.html', location.href).href + '#t=' + t;
+    if (w) w.location.href = url; else location.href = url;
+  } catch (e) { if (w) w.close(); msg = e.message; render(); }
+}
+
+// ---------- istatistik ----------
+const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function statDlg(id) {
+  const { t, b } = branchOf(id), now = new Date(), f = new Date(now); f.setDate(now.getDate() - 29);
+  dlg(`${title(esc(t.name) + ' · ' + esc(b.name))}
+    <div class="inl"><input id="s_f" type="date" value="${iso(f)}"><input id="s_t" type="date" value="${iso(now)}"><button class="sm" data-sq="${id}">Getir</button></div>
+    <div class="inl" style="margin-top:8px"><button class="sm" data-sr="${id}|0">Bugün</button><button class="sm" data-sr="${id}|6">7 gün</button><button class="sm" data-sr="${id}|29">30 gün</button><button class="sm" data-sr="${id}|month">Bu ay</button></div>
+    <div id="sb"><p class="mut">Yükleniyor…</p></div>`, true);
+  statLoad(id);
+}
+async function statLoad(id) {
+  const box = $('#sb'); if (!box) return;
+  try {
+    const r = await T('adk_owner_stats', { p_branch: id, p_from: val('s_f'), p_to: val('s_t') });
+    const pk = r.days.reduce((a, d) => a + d.packages, 0), ci = r.days.reduce((a, d) => a + Number(d.ciro), 0), mx = Math.max(1, ...r.days.map(d => d.packages));
+    box.innerHTML = `<div class="st4"><div><b>${num(pk)}</b><span>Teslim edilen paket</span></div><div><b>${tl(ci)}</b><span>Ciro</span></div>
+      <div><b>${num(r.orders)}</b><span>Toplam sipariş</span></div><div><b>${num(r.cancelled)}</b><span>İptal</span></div></div>
+      ${r.days.length ? '<div class="sec" style="margin-top:6px">Günlük paket</div>' + r.days.map(d => `<div class="bar"><span class="d">${new Date(d.day + 'T00:00:00').toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', weekday: 'short' })}</span><i style="width:${Math.max(2, d.packages / mx * 62)}%"></i><b>${d.packages}</b><span class="mut">${tl(d.ciro)}</span></div>`).join('') : '<p class="mut">Bu aralıkta teslimat yok.</p>'}
+      ${r.couriers.length ? '<div class="sec">Kurye bazında</div><div class="scroll"><table style="min-width:0"><tbody>' + r.couriers.map(c => `<tr><td class="l">${esc(c.courier)}</td><td><b>${num(c.packages)}</b> paket</td><td>${tl(c.ciro)}</td></tr>`).join('') + '</tbody></table></div>' : ''}`;
+  } catch (e) { box.innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+}
+function statRange(id, k) {
+  const now = new Date(), f = new Date(now);
+  if (k === 'month') f.setDate(1); else f.setDate(now.getDate() - Number(k));
+  $('#s_f').value = iso(f); $('#s_t').value = iso(now); statLoad(id);
+}
+
+// ---------- sahip şifresi ----------
+function myPwDlg() {
+  dlg(`${title('Sahip şifresi')}<label>Yeni şifre (en az 8 karakter)</label><input id="o_p1" type="password" autocomplete="new-password">
+    <label>Tekrar</label><input id="o_p2" type="password" autocomplete="new-password"><div id="mm" class="msg err"></div>
+    <div class="foot"><button data-mc="1">Vazgeç</button><button class="pri" data-a="mypwsave">Kaydet</button></div>`);
+}
+async function myPwSave() {
+  const a = val('o_p1'), b = val('o_p2'), m = $('#mm');
+  if (a.length < 8) { m.textContent = 'En az 8 karakter'; return; }
+  if (a !== b) { m.textContent = 'Şifreler aynı değil'; return; }
+  try { await T('adk_owner_change_password', { p_new: a }); closeMdl(); msg = 'Şifre değişti'; render(); setTimeout(() => { msg = ''; render(); }, 2500); } catch (e) { m.textContent = e.message; }
+}
+
+// ---------- olaylar ----------
+document.addEventListener('click', e => {
+  const t = e.target;
+  if (t.closest('[data-mc]') || t.id === 'mdl') return closeMdl();
+  const g = k => { const el = t.closest('[' + k + ']'); return el ? el.getAttribute(k) : null; };
+  let v;
+  if (t.id === 'go') return login();
+  if ((v = g('data-a'))) {
+    if (v === 'new') return newDlg();
+    if (v === 'out') return logout();
+    if (v === 'mypw') return myPwDlg();
+    if (v === 'mypwsave') return myPwSave();
+    if (v === 'newsave') return newSave();
+    if (v === 'gen') { const i = $('#' + t.closest('[data-a]').dataset.t); if (i) i.value = genPass(); return; }
+    if (v === 'copy') { const s = $('#sh').textContent; (navigator.clipboard ? navigator.clipboard.writeText(s) : Promise.reject()).then(() => { t.textContent = 'Kopyalandı ✓'; }, () => { const r = document.createRange(); r.selectNodeContents($('#sh')); getSelection().removeAllRanges(); getSelection().addRange(r); t.textContent = 'Seçildi, kopyala'; }); return; }
+  }
+  if ((v = g('data-imp'))) return impersonate(v);
+  if ((v = g('data-st'))) return statDlg(v);
+  if ((v = g('data-sq'))) return statLoad(v);
+  if ((v = g('data-sr'))) { const [id, k] = v.split('|'); return statRange(id, k); }
+  if ((v = g('data-et'))) return tenantDlg(v);
+  if ((v = g('data-ts'))) return tenantSave(v);
+  if ((v = g('data-eb'))) return branchDlg(v);
+  if ((v = g('data-ab'))) return branchDlg(null, v);
+  if (t.closest('[data-bs]')) { const el = t.closest('[data-bs]'); return branchSave(el.dataset.bs, el.dataset.tid); }
+  if ((v = g('data-bd'))) return delBranchDlg(v);
+  if ((v = g('data-bdo'))) return delBranch(v);
+  if ((v = g('data-ea'))) return adminDlg(v);
+  if ((v = g('data-aa'))) return adminDlg(null, v);
+  if (t.closest('[data-as]')) { const el = t.closest('[data-as]'); return adminSave(el.dataset.as, el.dataset.tid); }
+  if ((v = g('data-ad'))) return adminDel(v);
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'q') { q = e.target.value; const pos = e.target.selectionStart; render(); const i = $('#q'); i.focus(); i.setSelectionRange(pos, pos); }
+  if (e.target.id === 'n_name') { const c = $('#n_code'); if (c && !c.dataset.t) { c.value = slug(e.target.value); const u = $('#n_user'); if (u && !u.dataset.t) u.value = c.value; } }
+  if (e.target.id === 'n_code') { e.target.dataset.t = '1'; const u = $('#n_user'); if (u && !u.dataset.t) u.value = e.target.value; }
+  if (e.target.id === 'n_user') e.target.dataset.t = '1';
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('#mdl')) closeMdl();
+  if (e.key === 'Enter' && (e.target.id === 'u' || e.target.id === 'p')) login();
+});
+
+render();
+if (tok) load();
+setInterval(() => { if (tok && !document.hidden && !$('#mdl') && document.activeElement.id !== 'q') load(true); }, 30000);
+</script></body></html>
