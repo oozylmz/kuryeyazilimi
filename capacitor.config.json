@@ -4,8 +4,20 @@
   "webDir": "www",
   "server": {
     "url": "https://kuryeyazilimi.netlify.app/kurye.html",
-    "cleartext": false
+    "cleartext": false,
+    "allowNavigation": [
+      "izcikurye.net",
+      "*.izcikurye.net",
+      "kuryeyazilimi.netlify.app"
+    ]
   },
-  "android": { "allowMixedContent": false, "useLegacyBridge": true },
-  "plugins": { "CapacitorHttp": { "enabled": true } }
+  "android": {
+    "allowMixedContent": false,
+    "useLegacyBridge": true
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
 }
