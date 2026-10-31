@@ -13,6 +13,18 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
       - run: npm install
+      - name: Firebase (push bildirimi)
+        env:
+          GS: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GS" ]; then printf '%s' "$GS" > android/app/google-services.json; fi
+          if [ -f android/app/google-services.json ]; then
+            npm ls @capacitor/push-notifications >/dev/null 2>&1 || npm install @capacitor/push-notifications@^8.0.0
+            node -e "const fs=require('fs'),f='capacitor.config.json',c=JSON.parse(fs.readFileSync(f,'utf8'));c.android=c.android||{};c.android.appendUserAgent='IzciPush/1';fs.writeFileSync(f,JSON.stringify(c,null,2))"
+            echo "Push AÇIK (google-services.json bulundu)"
+          else
+            echo "google-services.json yok: push KAPALI, uygulama yine çalışır"
+          fi
       - run: npx cap sync android
       - name: APK derle
         working-directory: android
